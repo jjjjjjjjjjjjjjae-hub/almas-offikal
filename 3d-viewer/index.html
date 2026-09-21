@@ -167,11 +167,44 @@ function setMapObject(r,url=null){
  if(mapObj){scene.remove(mapObj);disposeObject(mapObj)}
  mapObj=r.object;mapMeta={name:r.name||'map',url};normalizeMaterials(mapObj);scene.add(mapObj);frameObject(mapObj);charLabel.classList.remove('disabled');hint.style.display='none';editPanel.classList.add('show');updateSizes();
 }
+function findFloorY(x,z){
+ if(!mapObj)return 0;
+ const box=getBox(mapObj),height=Math.max(.1,box.max.y-box.min.y);
+ const ray=new THREE.Raycaster(new THREE.Vector3(x,box.max.y+height*2,z),new THREE.Vector3(0,-1,0),0,height*5);
+ const hits=ray.intersectObject(mapObj,true);
+ const floors=[];
+ const normalMatrix=new THREE.Matrix3();
+ for(const h of hits){
+  if(!h.face||!h.object)continue;
+  normalMatrix.getNormalMatrix(h.object.matrixWorld);
+  const n=h.face.normal.clone().applyMatrix3(normalMatrix).normalize();
+  if(n.y>.45)floors.push(h.point.y);
+ }
+ return floors.length?Math.min(...floors):box.min.y;
+}
+function autoPlaceCharacter(){
+ if(!mapObj||!charObj)return;
+ charObj.position.set(0,0,0);charObj.rotation.set(0,0,0);charObj.scale.set(1,1,1);charObj.updateMatrixWorld(true);
+ let s=getSize(charObj);
+ if(s){
+  if(s.x>=s.y&&s.x>=s.z)charObj.rotation.z=Math.PI/2;
+  else if(s.z>=s.x&&s.z>=s.y)charObj.rotation.x=-Math.PI/2;
+ }
+ charObj.updateMatrixWorld(true);
+ const mapBox=getBox(mapObj),mapCenter=mapBox.getCenter(new THREE.Vector3());
+ const cbox=getBox(charObj),cc=cbox.getCenter(new THREE.Vector3());
+ const floorY=findFloorY(mapCenter.x,mapCenter.z);
+ charObj.position.x+=mapCenter.x-cc.x;
+ charObj.position.z+=mapCenter.z-cc.z;
+ charObj.updateMatrixWorld(true);
+ const cbox2=getBox(charObj);
+ charObj.position.y+=floorY-cbox2.min.y;
+ charObj.updateMatrixWorld(true);
+}
 function setCharacterObject(r,url=null){
  if(charObj){transform.detach();scene.remove(charObj);disposeObject(charObj)}
  charObj=r.object;charMeta={name:r.name||'character',url};charAnimations=r.animations||[];normalizeMaterials(charObj);
- const box=getBox(mapObj),center=box.getCenter(new THREE.Vector3());charObj.position.set(center.x,box.min.y,center.z);
- scene.add(charObj);transform.attach(charObj);charMixer=null;
+ scene.add(charObj);autoPlaceCharacter();transform.attach(charObj);charMixer=null;
  if(charAnimations.length){charMixer=new THREE.AnimationMixer(charObj);charAnimations.forEach(a=>charMixer.clipAction(a).play())}
  editPanel.classList.add('show');syncInputs();updateSizes();
 }
