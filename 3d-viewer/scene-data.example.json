@@ -1,0 +1,26 @@
+{
+  "schema": "almas-3d-scene",
+  "version": 1,
+  "updatedAt": "2026-09-21T00:00:00.000Z",
+  "map": {
+    "name": "map.glb",
+    "url": "https://YOUR-SERVER.example/models/map.glb",
+    "size": {"x": 100, "y": 20, "z": 100},
+    "transform": {
+      "position": [0, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": [1, 1, 1]
+    }
+  },
+  "character": {
+    "name": "character.glb",
+    "url": "https://YOUR-SERVER.example/models/character.glb",
+    "size": {"x": 0.7, "y": 1.8, "z": 0.5},
+    "transform": {
+      "position": [0, 0, 0],
+      "rotationDeg": [0, 0, 0],
+      "scale": [1, 1, 1]
+    }
+  },
+  "combinedSize": {"x": 100, "y": 20, "z": 100}
+}
