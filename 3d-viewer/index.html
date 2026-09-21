@@ -12,7 +12,7 @@
 .topbar{position:fixed;left:12px;right:12px;top:12px;z-index:10;display:flex;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:18px;background:var(--panel);backdrop-filter:blur(16px)}
 .brand{font-weight:800;padding:0 8px;white-space:nowrap}.brand b{color:var(--accent)}
 button,.filebtn,input{border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--text);border-radius:12px;padding:10px 12px;font-weight:700}
-button,.filebtn{cursor:pointer;user-select:none}.filebtn.map{background:linear-gradient(135deg,rgba(110,231,255,.22),rgba(110,231,255,.07))}
+button,.filebtn{cursor:pointer;user-select:none}.projecttag{padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(135deg,rgba(110,231,255,.14),rgba(155,124,255,.14));font-weight:800;white-space:nowrap}.filebtn.map{background:linear-gradient(135deg,rgba(110,231,255,.22),rgba(110,231,255,.07))}
 .filebtn.char{background:linear-gradient(135deg,rgba(155,124,255,.25),rgba(155,124,255,.08))}
 .filebtn.disabled{opacity:.35;pointer-events:none}.files{display:none}.spacer{flex:1}
 .panel{position:fixed;right:12px;top:76px;z-index:10;width:min(370px,calc(100vw - 24px));padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--panel);backdrop-filter:blur(16px);display:none;max-height:calc(100vh - 145px);overflow:auto}
@@ -37,10 +37,8 @@ button,.filebtn{cursor:pointer;user-select:none}.filebtn.map{background:linear-g
  <div id="viewport"></div>
  <div class="topbar">
   <div class="brand">Almas <b>3D</b> Editor</div>
-  <label class="filebtn map" for="mapFiles">🗺️ 1. Карта</label>
-  <input id="mapFiles" class="files" type="file" multiple accept=".glb,.gltf,.obj,.stl,.fbx,.bin,.png,.jpg,.jpeg,.webp"/>
-  <label id="charLabel" class="filebtn char disabled" for="charFiles">🧍 2. Кейіпкер</label>
-  <input id="charFiles" class="files" type="file" multiple accept=".glb,.gltf,.obj,.stl,.fbx,.bin,.png,.jpg,.jpeg,.webp"/>
+  <div class="projecttag">🗺️ Sendstone + 🧍 SAS</div>
+  <button id="reloadProject">↻</button>
   <button id="frame">⌂</button><button id="grid" class="optional"># Grid</button>
   <div class="spacer"></div><button id="fullscreen">⛶</button>
  </div>
@@ -96,12 +94,12 @@ button,.filebtn{cursor:pointer;user-select:none}.filebtn.map{background:linear-g
 
  <div class="hint" id="hint">
   <div class="hintbox">
-   <h1>Карта + кейіпкер + сервер дерегі</h1>
-   <p class="step">1-қадам: картаны жүкте</p>
-   <p>Өлшем автоматты есептеледі. Кейіпкерді реттеген соң JSON сақта немесе екеуін бір GLB-ге біріктір.</p>
+   <h1>Almas Game Project</h1>
+   <p class="step">Sendstone картасы + SAS кейіпкері</p>
+   <p>Жоба автоматты жүктеледі. Кейіпкер карта еденіне автоматты қойылады.</p>
   </div>
  </div>
- <div class="status" id="status">Алдымен картаны жүкте</div>
+ <div class="status" id="status">Карта мен кейіпкер жүктелуде…</div>
 </div>
 
 <script type="module">
@@ -116,7 +114,7 @@ import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 
 const q=s=>document.querySelector(s);
-const viewport=q('#viewport'),statusEl=q('#status'),hint=q('#hint'),mapFiles=q('#mapFiles'),charFiles=q('#charFiles'),charLabel=q('#charLabel'),editPanel=q('#editPanel');
+const viewport=q('#viewport'),statusEl=q('#status'),hint=q('#hint'),editPanel=q('#editPanel');
 const setStatus=t=>statusEl.textContent=t;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b0f14);
 const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.01,20000);camera.position.set(5,4,7);
@@ -165,7 +163,7 @@ async function loadModelURL(url,name=url,manager=new THREE.LoadingManager()){
 }
 function setMapObject(r,url=null){
  if(mapObj){scene.remove(mapObj);disposeObject(mapObj)}
- mapObj=r.object;mapMeta={name:r.name||'map',url};normalizeMaterials(mapObj);scene.add(mapObj);frameObject(mapObj);charLabel.classList.remove('disabled');hint.style.display='none';editPanel.classList.add('show');updateSizes();
+ mapObj=r.object;mapMeta={name:r.name||'map',url};normalizeMaterials(mapObj);scene.add(mapObj);frameObject(mapObj);hint.style.display='none';editPanel.classList.add('show');updateSizes();
 }
 function findFloorY(x,z){
  if(!mapObj)return 0;
@@ -264,7 +262,6 @@ function syncInputs(){if(!charObj)return;q('#px').value=charObj.position.x.toFix
 function applyInputs(){if(!charObj)return;const n=id=>parseFloat(q(id).value),x=n('#px'),y=n('#py'),z=n('#pz'),ry=n('#ry'),s=n('#sc');if(Number.isFinite(x))charObj.position.x=x;if(Number.isFinite(y))charObj.position.y=y;if(Number.isFinite(z))charObj.position.z=z;if(Number.isFinite(ry))charObj.rotation.y=THREE.MathUtils.degToRad(ry);if(Number.isFinite(s)&&s>0)charObj.scale.setScalar(s);updateSizes()}
 ['#px','#py','#pz','#ry','#sc'].forEach(id=>q(id).addEventListener('change',applyInputs));
 
-mapFiles.addEventListener('change',e=>loadMap(e.target.files));charFiles.addEventListener('change',e=>loadCharacter(e.target.files));
 q('#sceneJson').addEventListener('change',async e=>{try{const f=e.target.files[0];if(f)await loadSceneData(JSON.parse(await f.text()))}catch(err){setStatus('JSON қатесі: '+err.message)}});
 q('#saveJson').onclick=saveJSON;q('#mergeGlb').onclick=mergeGLB;q('#serverLoad').onclick=serverLoad;q('#serverSave').onclick=serverSave;
 q('#frame').onclick=()=>frameObject(mapObj||charObj);q('#grid').onclick=()=>gridHelper.visible=!gridHelper.visible;
@@ -281,7 +278,24 @@ q('#scaleUp').onclick=()=>{if(!charObj)return;charObj.scale.multiplyScalar(1.1);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 renderer.setAnimationLoop(()=>{const dt=clock.getDelta();charMixer?.update(dt);orbit.update();renderer.render(scene,camera)});
 
+async function loadProject(){
+ try{
+  setStatus('Sendstone картасы жүктелуде…');
+  const m=await loadModelURL('./assets/sendstone_new.glb','sendstone_new.glb');
+  setMapObject(m,'./assets/sendstone_new.glb');
+  setStatus('SAS кейіпкері жүктелуде…');
+  const p=await loadModelURL('./assets/sas__cs2_agent_model_blue.glb','sas__cs2_agent_model_blue.glb');
+  setCharacterObject(p,'./assets/sas__cs2_agent_model_blue.glb');
+  frameObject(mapObj);
+  setStatus('Дайын ✅ Sendstone + SAS картаға қойылды');
+ }catch(e){
+  console.error(e);
+  setStatus('Модель файлдары табылмады: 3d-viewer/assets/ ішіне екі GLB керек');
+  hint.style.display='grid';
+ }
+}
+q('#reloadProject').onclick=loadProject;
 const sceneParam=new URLSearchParams(location.search).get('scene');
-if(sceneParam){q('#serverUrl').value=sceneParam;serverLoad()}
+if(sceneParam){q('#serverUrl').value=sceneParam;serverLoad()}else{loadProject()}
 </script>
 </body></html>
