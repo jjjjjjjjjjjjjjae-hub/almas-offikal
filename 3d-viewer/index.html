@@ -1,301 +1,271 @@
 <!doctype html>
 <html lang="kk">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-<meta name="theme-color" content="#0b0f14"/>
-<title>Almas 3D Scene Editor</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#070b10">
+<title>Almas Game</title>
 <style>
-:root{color-scheme:dark;--bg:#080b10;--panel:rgba(17,22,30,.9);--line:rgba(255,255,255,.12);--text:#f6f7f9;--muted:#aeb6c3;--accent:#6ee7ff;--purple:#9b7cff;--ok:#72f1a8}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,system-ui,Arial,sans-serif}
-#app,#viewport{position:fixed;inset:0}#viewport canvas{display:block;width:100%;height:100%;touch-action:none}
-.topbar{position:fixed;left:12px;right:12px;top:12px;z-index:10;display:flex;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:18px;background:var(--panel);backdrop-filter:blur(16px)}
-.brand{font-weight:800;padding:0 8px;white-space:nowrap}.brand b{color:var(--accent)}
-button,.filebtn,input{border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--text);border-radius:12px;padding:10px 12px;font-weight:700}
-button,.filebtn{cursor:pointer;user-select:none}.projecttag{padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(135deg,rgba(110,231,255,.14),rgba(155,124,255,.14));font-weight:800;white-space:nowrap}.filebtn.map{background:linear-gradient(135deg,rgba(110,231,255,.22),rgba(110,231,255,.07))}
-.filebtn.char{background:linear-gradient(135deg,rgba(155,124,255,.25),rgba(155,124,255,.08))}
-.filebtn.disabled{opacity:.35;pointer-events:none}.files{display:none}.spacer{flex:1}
-.panel{position:fixed;right:12px;top:76px;z-index:10;width:min(370px,calc(100vw - 24px));padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--panel);backdrop-filter:blur(16px);display:none;max-height:calc(100vh - 145px);overflow:auto}
-.panel.show{display:block}.panel h3{margin:0 0 10px;font-size:15px}.panel h4{margin:12px 0 6px;font-size:12px;color:var(--muted)}
-.modes,.axisrow,.scaleRow,.actions{display:grid;gap:6px;margin-top:8px}.modes{grid-template-columns:repeat(3,1fr)}.axisrow{grid-template-columns:repeat(6,1fr)}.scaleRow{grid-template-columns:repeat(3,1fr)}.actions{grid-template-columns:repeat(2,1fr)}
-.panel button{padding:9px 6px;font-size:12px}.panel button.active{outline:2px solid var(--accent)}
-.values,.sizebox{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.values label{font-size:11px;color:var(--muted)}.values input{width:100%;padding:8px 7px;margin-top:3px;font-size:12px}
-.sizebox div{padding:8px;border:1px solid var(--line);border-radius:10px;font-size:11px;color:var(--muted)}.sizebox b{display:block;color:var(--text);font-size:12px;margin-top:3px}
-.serverrow{display:grid;grid-template-columns:1fr auto;gap:6px}.serverrow input{min-width:0;padding:9px;font-size:11px}
-.status{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:10;max-width:calc(100vw - 24px);padding:9px 13px;border-radius:13px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hint{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:3}.hintbox{width:min(560px,calc(100vw - 34px));padding:26px;border:1px dashed rgba(255,255,255,.24);border-radius:24px;text-align:center;background:rgba(8,11,16,.55);backdrop-filter:blur(10px)}
-.hintbox h1{margin:0 0 8px;font-size:24px}.hintbox p{margin:5px 0;color:var(--muted);line-height:1.5}.step{color:var(--accent)!important;font-weight:800}.ok{color:var(--ok)}
-@media(max-width:700px){
- .brand{display:none}.topbar{gap:5px}.topbar button,.filebtn{padding:9px 9px;font-size:12px}.optional{display:none}
- .panel{top:auto;bottom:48px;right:8px;left:8px;width:auto;max-height:49vh}.status{bottom:8px}
-}
+:root{color-scheme:dark;--panel:rgba(9,14,20,.64);--line:rgba(255,255,255,.14);--text:#fff;--muted:#aeb8c6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#070b10;font-family:system-ui,Arial,sans-serif;touch-action:none}
+#game{position:fixed;inset:0}
+canvas{display:block;width:100%;height:100%}
+#loading{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#070b10;color:#fff;text-align:center}
+#loading.hidden{display:none}
+#loading b{display:block;font-size:24px;margin-bottom:8px}
+#loading span{color:var(--muted)}
+#hud{position:fixed;inset:0;z-index:10;pointer-events:none}
+.top{position:absolute;top:max(10px,env(safe-area-inset-top));left:10px;right:10px;display:flex;justify-content:space-between;align-items:center}
+.badge{pointer-events:auto;padding:9px 12px;border:1px solid var(--line);border-radius:13px;background:var(--panel);backdrop-filter:blur(10px);font-weight:800}
+#fs{border:1px solid var(--line);border-radius:13px;background:var(--panel);color:#fff;padding:9px 12px;font-size:18px}
+#joy{position:absolute;left:max(18px,env(safe-area-inset-left));bottom:max(22px,env(safe-area-inset-bottom));width:132px;height:132px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.055);pointer-events:auto;touch-action:none}
+#stick{position:absolute;left:41px;top:41px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.30);border:1px solid rgba(255,255,255,.35)}
+#run{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:max(30px,env(safe-area-inset-bottom));width:74px;height:74px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:#fff;font-weight:900;pointer-events:auto}
+#hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);padding:7px 10px;border-radius:10px;background:rgba(0,0,0,.35);color:var(--muted);font-size:12px}
+@media(hover:hover) and (pointer:fine){#joy,#run{opacity:.3}#hint{display:block}}
+@media(max-width:700px){#hint{display:none}.badge{font-size:13px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"}}</script>
 </head>
 <body>
-<div id="app">
- <div id="viewport"></div>
- <div class="topbar">
-  <div class="brand">Almas <b>3D</b> Editor</div>
-  <div class="projecttag">🗺️ Sendstone + 🧍 SAS</div>
-  <button id="reloadProject">↻</button>
-  <button id="frame">⌂</button><button id="grid" class="optional"># Grid</button>
-  <div class="spacer"></div><button id="fullscreen">⛶</button>
- </div>
-
- <div id="editPanel" class="panel">
-  <h3>🧍 Кейіпкерді реттеу</h3>
-  <div class="modes">
-   <button id="moveMode" class="active">↔ Жылжыту</button>
-   <button id="rotateMode">⟳ Бұру</button>
-   <button id="scaleMode">⤢ Өлшем</button>
+<div id="game"></div>
+<div id="loading"><div><b>ALMAS GAME</b><span id="loadText">Карта жүктелуде…</span></div></div>
+<div id="hud">
+  <div class="top">
+    <div class="badge">ALMAS GAME</div>
+    <button id="fs">⛶</button>
   </div>
-  <div class="axisrow">
-   <button data-move="x,-1">X−</button><button data-move="x,1">X+</button>
-   <button data-move="y,-1">Y−</button><button data-move="y,1">Y+</button>
-   <button data-move="z,-1">Z−</button><button data-move="z,1">Z+</button>
-  </div>
-  <div class="scaleRow">
-   <button id="turnLeft">↶ 15°</button><button id="scaleDown">− Өлшем</button><button id="scaleUp">+ Өлшем</button>
-  </div>
-  <div class="values">
-   <label>X<input id="px" type="number" step="0.01"/></label>
-   <label>Y<input id="py" type="number" step="0.01"/></label>
-   <label>Z<input id="pz" type="number" step="0.01"/></label>
-   <label>Rot Y°<input id="ry" type="number" step="1"/></label>
-   <label>Scale<input id="sc" type="number" step="0.01" min="0.001"/></label>
-   <label>Қадам<input id="stepSize" type="number" value="0.1" step="0.05" min="0.001"/></label>
-  </div>
-
-  <h4>ӨЛШЕМДЕР</h4>
-  <div class="sizebox">
-   <div>Карта X/Y/Z<b id="mapSize">—</b></div>
-   <div>Кейіпкер X/Y/Z<b id="charSize">—</b></div>
-   <div>Біріккен X/Y/Z<b id="sceneSize">—</b></div>
-  </div>
-
-  <h4>САҚТАУ ЖӘНЕ БІРІКТІРУ</h4>
-  <div class="actions">
-   <button id="saveJson">💾 Scene JSON</button>
-   <button id="mergeGlb">📦 Біріктіру GLB</button>
-  </div>
-
-  <h4>СЕРВЕРМЕН БАЙЛАНЫС</h4>
-  <div class="serverrow">
-   <input id="serverUrl" placeholder="https://server.kz/api/scene"/>
-   <button id="serverLoad">⬇ Оқу</button>
-  </div>
-  <div class="actions">
-   <button id="serverSave">⬆ Серверге жіберу</button>
-   <label class="filebtn" for="sceneJson">📄 JSON ашу</label>
-  </div>
-  <input id="sceneJson" class="files" type="file" accept=".json,application/json"/>
- </div>
-
- <div class="hint" id="hint">
-  <div class="hintbox">
-   <h1>Almas Game Project</h1>
-   <p class="step">Sendstone картасы + SAS кейіпкері</p>
-   <p>Жоба автоматты жүктеледі. Кейіпкер карта еденіне автоматты қойылады.</p>
-  </div>
- </div>
- <div class="status" id="status">Карта мен кейіпкер жүктелуде…</div>
+  <div id="joy"><div id="stick"></div></div>
+  <button id="run">RUN</button>
+  <div id="hint">WASD • Shift — жүгіру • тышқанмен камера</div>
 </div>
 
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { STLLoader } from 'three/addons/loaders/STLLoader.js';
-import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
-import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 
-const q=s=>document.querySelector(s);
-const viewport=q('#viewport'),statusEl=q('#status'),hint=q('#hint'),editPanel=q('#editPanel');
-const setStatus=t=>statusEl.textContent=t;
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b0f14);
-const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.01,20000);camera.position.set(5,4,7);
+const root=document.querySelector('#game');
+const loading=document.querySelector('#loading');
+const loadText=document.querySelector('#loadText');
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x9bb5c9);
+scene.fog=new THREE.Fog(0x9bb5c9,4,18);
+
+const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.01,100);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;viewport.appendChild(renderer.domElement);
-const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;orbit.dampingFactor=.07;
-const transform=new TransformControls(camera,renderer.domElement);scene.add(transform.getHelper());transform.setMode('translate');transform.setSpace('world');
-transform.addEventListener('dragging-changed',e=>orbit.enabled=!e.value);transform.addEventListener('objectChange',()=>{syncInputs();updateSizes()});
-scene.add(new THREE.HemisphereLight(0xddeeff,0x333344,2.25));
-const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(8,12,7);key.castShadow=true;scene.add(key);
-const fill=new THREE.DirectionalLight(0x8aa6ff,1.1);fill.position.set(-6,3,-5);scene.add(fill);
-const gridHelper=new THREE.GridHelper(40,40,0x52606f,0x26313c);gridHelper.material.transparent=true;gridHelper.material.opacity=.4;scene.add(gridHelper);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
+renderer.setSize(innerWidth,innerHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+root.appendChild(renderer.domElement);
 
-let mapObj=null,charObj=null,charMixer=null,charAnimations=[];
-let mapMeta={name:null,url:null},charMeta={name:null,url:null};
+scene.add(new THREE.HemisphereLight(0xdcecff,0x3d4650,2.1));
+const sun=new THREE.DirectionalLight(0xffffff,3.1);
+sun.position.set(4,7,3);
+sun.castShadow=true;
+scene.add(sun);
+
+const loader=new GLTFLoader();
+let map=null,player=null,mixer=null;
 const clock=new THREE.Clock();
 
-function disposeObject(obj){obj?.traverse(n=>{n.geometry?.dispose?.();const mats=Array.isArray(n.material)?n.material:(n.material?[n.material]:[]);mats.forEach(m=>{Object.values(m).forEach(v=>{if(v&&v.isTexture)v.dispose?.()});m.dispose?.()})})}
-function normalizeMaterials(root){root.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;const mats=Array.isArray(o.material)?o.material:[o.material];mats.filter(Boolean).forEach(m=>{if(m.map)m.map.colorSpace=THREE.SRGBColorSpace;m.needsUpdate=true})}})}
-function getSize(obj){if(!obj)return null;obj.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(obj);if(b.isEmpty())return null;const v=b.getSize(new THREE.Vector3());return {x:v.x,y:v.y,z:v.z}}
-function getBox(obj){obj.updateWorldMatrix(true,true);return new THREE.Box3().setFromObject(obj)}
-function fmtSize(s){return s?([s.x,s.y,s.z].map(v=>Number(v.toFixed(3))).join(' / ')):'—'}
-function updateSizes(){
- q('#mapSize').textContent=fmtSize(getSize(mapObj));q('#charSize').textContent=fmtSize(getSize(charObj));
- if(mapObj&&charObj){const box=getBox(mapObj).union(getBox(charObj));const v=box.getSize(new THREE.Vector3());q('#sceneSize').textContent=fmtSize(v)}else q('#sceneSize').textContent='—';
-}
-function frameObject(obj){if(!obj)return;const box=getBox(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),maxDim=Math.max(size.x,size.y,size.z)||1,fov=camera.fov*Math.PI/180,dist=Math.abs(maxDim/(2*Math.tan(fov/2)))*1.45;camera.near=Math.max(maxDim/10000,.001);camera.far=Math.max(2000,maxDim*1000);camera.updateProjectionMatrix();camera.position.set(center.x+dist*.75,center.y+dist*.55,center.z+dist);orbit.target.copy(center);orbit.update()}
-const ext=name=>(name.split('?')[0].split('#')[0].toLowerCase().split('.').pop());
+const move={x:0,z:0,run:false};
+const keys=new Set();
 
-async function parseFiles(fileList){
- const files=[...fileList],model=files.find(f=>['glb','gltf','obj','stl','fbx'].includes(ext(f.name)));
- if(!model)throw new Error('3D файл табылмады');
- const urls=new Map(files.map(f=>[f.name,URL.createObjectURL(f)])),manager=new THREE.LoadingManager();
- manager.setURLModifier(url=>urls.get(decodeURIComponent(url.split('/').pop().split('?')[0]))||url);
- try{return await loadModelURL(urls.get(model.name),model.name,manager)}
- finally{setTimeout(()=>{for(const u of urls.values())URL.revokeObjectURL(u)},8000)}
-}
-async function loadModelURL(url,name=url,manager=new THREE.LoadingManager()){
- const e=ext(name||url);
- if(e==='glb'||e==='gltf'){const g=await new GLTFLoader(manager).loadAsync(url);return {object:g.scene,animations:g.animations||[],name:name||'model'};}
- if(e==='obj')return {object:await new OBJLoader(manager).loadAsync(url),animations:[],name:name||'model'};
- if(e==='stl'){const geo=await new STLLoader(manager).loadAsync(url);geo.computeVertexNormals();return {object:new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xb9c5d4,roughness:.7})),animations:[],name:name||'model'};}
- if(e==='fbx'){const o=await new FBXLoader(manager).loadAsync(url);return {object:o,animations:o.animations||[],name:name||'model'};}
- throw new Error('Формат қолдау жоқ: '+e);
-}
-function setMapObject(r,url=null){
- if(mapObj){scene.remove(mapObj);disposeObject(mapObj)}
- mapObj=r.object;mapMeta={name:r.name||'map',url};normalizeMaterials(mapObj);scene.add(mapObj);frameObject(mapObj);hint.style.display='none';editPanel.classList.add('show');updateSizes();
-}
-function findFloorY(x,z){
- if(!mapObj)return 0;
- const box=getBox(mapObj),height=Math.max(.1,box.max.y-box.min.y);
- const ray=new THREE.Raycaster(new THREE.Vector3(x,box.max.y+height*2,z),new THREE.Vector3(0,-1,0),0,height*5);
- const hits=ray.intersectObject(mapObj,true);
- const floors=[];
- const normalMatrix=new THREE.Matrix3();
- for(const h of hits){
-  if(!h.face||!h.object)continue;
-  normalMatrix.getNormalMatrix(h.object.matrixWorld);
-  const n=h.face.normal.clone().applyMatrix3(normalMatrix).normalize();
-  if(n.y>.45)floors.push(h.point.y);
- }
- return floors.length?Math.min(...floors):box.min.y;
-}
-function autoPlaceCharacter(){
- if(!mapObj||!charObj)return;
- charObj.position.set(0,0,0);charObj.rotation.set(0,0,0);charObj.scale.set(1,1,1);charObj.updateMatrixWorld(true);
- let s=getSize(charObj);
- if(s){
-  if(s.x>=s.y&&s.x>=s.z)charObj.rotation.z=Math.PI/2;
-  else if(s.z>=s.x&&s.z>=s.y)charObj.rotation.x=-Math.PI/2;
- }
- charObj.updateMatrixWorld(true);
- const mapBox=getBox(mapObj),mapCenter=mapBox.getCenter(new THREE.Vector3());
- const cbox=getBox(charObj),cc=cbox.getCenter(new THREE.Vector3());
- const floorY=findFloorY(mapCenter.x,mapCenter.z);
- charObj.position.x+=mapCenter.x-cc.x;
- charObj.position.z+=mapCenter.z-cc.z;
- charObj.updateMatrixWorld(true);
- const cbox2=getBox(charObj);
- charObj.position.y+=floorY-cbox2.min.y;
- charObj.updateMatrixWorld(true);
-}
-function setCharacterObject(r,url=null){
- if(charObj){transform.detach();scene.remove(charObj);disposeObject(charObj)}
- charObj=r.object;charMeta={name:r.name||'character',url};charAnimations=r.animations||[];normalizeMaterials(charObj);
- scene.add(charObj);autoPlaceCharacter();transform.attach(charObj);charMixer=null;
- if(charAnimations.length){charMixer=new THREE.AnimationMixer(charObj);charAnimations.forEach(a=>charMixer.clipAction(a).play())}
- editPanel.classList.add('show');syncInputs();updateSizes();
-}
-async function loadMap(files){setStatus('Карта жүктелуде…');try{const r=await parseFiles(files);setMapObject(r);setStatus(r.name+' • карта дайын. Өлшем: '+fmtSize(getSize(mapObj)))}catch(e){console.error(e);setStatus('Карта қатесі: '+e.message)}}
-async function loadCharacter(files){if(!mapObj){setStatus('Алдымен картаны жүкте');return}setStatus('Кейіпкер жүктелуде…');try{const r=await parseFiles(files);setCharacterObject(r);setStatus(r.name+' • кейіпкер дайын. Өлшем: '+fmtSize(getSize(charObj)))}catch(e){console.error(e);setStatus('Кейіпкер қатесі: '+e.message)}}
+let yaw=Math.PI;
+let pitch=.22;
+let camDistance=.16;
+let dragging=false,lastX=0,lastY=0;
 
-function transformData(obj){return {position:[obj.position.x,obj.position.y,obj.position.z],rotationDeg:[THREE.MathUtils.radToDeg(obj.rotation.x),THREE.MathUtils.radToDeg(obj.rotation.y),THREE.MathUtils.radToDeg(obj.rotation.z)],scale:[obj.scale.x,obj.scale.y,obj.scale.z]}}
-function applyTransform(obj,t){if(!obj||!t)return;if(t.position)obj.position.fromArray(t.position);if(t.rotationDeg)obj.rotation.set(...t.rotationDeg.map(THREE.MathUtils.degToRad));if(t.scale)obj.scale.fromArray(t.scale)}
-function buildSceneData(){
- const mapSize=getSize(mapObj),charSize=getSize(charObj);let combined=null;
- if(mapObj&&charObj){const v=getBox(mapObj).union(getBox(charObj)).getSize(new THREE.Vector3());combined={x:v.x,y:v.y,z:v.z}}
- return {
-  schema:'almas-3d-scene',version:1,updatedAt:new Date().toISOString(),
-  map:mapObj?{name:mapMeta.name,url:mapMeta.url,size:mapSize,transform:transformData(mapObj)}:null,
-  character:charObj?{name:charMeta.name,url:charMeta.url,size:charSize,transform:transformData(charObj)}:null,
-  combinedSize:combined
- };
-}
-function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
-function saveJSON(){if(!mapObj){setStatus('Карта жоқ');return}const data=buildSceneData();downloadBlob(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'Almas_scene.json');setStatus('Scene JSON сақталды • сервер осы деректі оқи алады')}
+function box(o){o.updateWorldMatrix(true,true);return new THREE.Box3().setFromObject(o)}
+function size(o){return box(o).getSize(new THREE.Vector3())}
 
-async function mergeGLB(){
- if(!mapObj||!charObj){setStatus('Карта мен кейіпкер екеуі де керек');return}
- setStatus('Карта + кейіпкер біріктірілуде…');
- try{
-  const group=new THREE.Group();group.name='AlmasCombinedScene';
-  const mapClone=cloneSkeleton(mapObj),charClone=cloneSkeleton(charObj);mapClone.name='MAP_'+(mapMeta.name||'map');charClone.name='CHARACTER_'+(charMeta.name||'character');
-  group.add(mapClone,charClone);group.userData.almasScene=buildSceneData();
-  const exporter=new GLTFExporter();
-  const glb=await exporter.parseAsync(group,{binary:true,onlyVisible:true,trs:false,animations:[]});
-  downloadBlob(new Blob([glb],{type:'model/gltf-binary'}),'Almas_Map_Character_Combined.glb');
-  setStatus('Дайын ✅ карта мен кейіпкер бір GLB болды');
- }catch(e){console.error(e);setStatus('GLB біріктіру қатесі: '+e.message)}
+function floorY(x,z){
+  if(!map)return 0;
+  const b=box(map),h=Math.max(.1,b.max.y-b.min.y);
+  const ray=new THREE.Raycaster(new THREE.Vector3(x,b.max.y+h*3,z),new THREE.Vector3(0,-1,0),0,h*8);
+  const hits=ray.intersectObject(map,true);
+  const nm=new THREE.Matrix3(),ys=[];
+  for(const hit of hits){
+    if(!hit.face)continue;
+    nm.getNormalMatrix(hit.object.matrixWorld);
+    const n=hit.face.normal.clone().applyMatrix3(nm).normalize();
+    if(n.y>.42)ys.push(hit.point.y);
+  }
+  return ys.length?Math.max(...ys):b.min.y;
 }
 
-async function loadSceneData(data){
- if(!data||data.schema!=='almas-3d-scene')throw new Error('Almas scene JSON емес');
- if(data.map?.url){
-  setStatus('Серверден карта оқылуда…');const r=await loadModelURL(data.map.url,data.map.name||data.map.url);setMapObject(r,data.map.url);applyTransform(mapObj,data.map.transform);
- }else if(!mapObj)throw new Error('JSON-да map.url жоқ. Алдымен картаны файлдан жүкте.');
- if(data.character?.url){
-  setStatus('Серверден кейіпкер оқылуда…');const r=await loadModelURL(data.character.url,data.character.name||data.character.url);setCharacterObject(r,data.character.url);applyTransform(charObj,data.character.transform);
- }else if(data.character&&charObj)applyTransform(charObj,data.character.transform);
- if(data.map?.transform&&mapObj)applyTransform(mapObj,data.map.transform);
- syncInputs();updateSizes();frameObject(mapObj);setStatus('Сервер Scene JSON оқылды ✅');
+function placePlayer(){
+  player.position.set(0,0,0);
+  player.rotation.set(0,0,0);
+  player.scale.set(1,1,1);
+  player.updateMatrixWorld(true);
+
+  const s=size(player);
+  if(s.x>=s.y&&s.x>=s.z)player.rotation.z=Math.PI/2;
+  else if(s.z>=s.x&&s.z>=s.y)player.rotation.x=-Math.PI/2;
+
+  player.updateMatrixWorld(true);
+  const mb=box(map),mc=mb.getCenter(new THREE.Vector3());
+  const pb=box(player),pc=pb.getCenter(new THREE.Vector3());
+
+  player.position.x+=mc.x-pc.x;
+  player.position.z+=mc.z-pc.z;
+  player.updateMatrixWorld(true);
+
+  const fy=floorY(player.position.x,player.position.z);
+  player.position.y+=fy-box(player).min.y;
+  player.updateMatrixWorld(true);
 }
-async function serverLoad(){
- const url=q('#serverUrl').value.trim();if(!url){setStatus('Server URL енгіз');return}
- try{setStatus('Сервер дерегі оқылуда…');const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw new Error('HTTP '+res.status);await loadSceneData(await res.json())}catch(e){console.error(e);setStatus('Server оқу қатесі: '+e.message)}
+
+async function start(){
+  try{
+    loadText.textContent='Sendstone картасы жүктелуде…';
+    const mg=await loader.loadAsync('./assets/sendstone_new.glb');
+    map=mg.scene;
+    map.traverse(o=>{if(o.isMesh){o.receiveShadow=true;o.castShadow=false}});
+    scene.add(map);
+
+    loadText.textContent='SAS кейіпкері жүктелуде…';
+    const pg=await loader.loadAsync('./assets/sas__cs2_agent_model_blue.glb');
+    player=pg.scene;
+    player.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+    scene.add(player);
+    placePlayer();
+
+    if(pg.animations?.length){
+      mixer=new THREE.AnimationMixer(player);
+      const clip=pg.animations[0];
+      if(clip)mixer.clipAction(clip).play();
+    }
+
+    const ps=size(player);
+    camDistance=Math.max(ps.y*5, .16);
+
+    loading.classList.add('hidden');
+  }catch(e){
+    console.error(e);
+    loadText.textContent='Модель файлдары табылмады';
+  }
 }
-async function serverSave(){
- const url=q('#serverUrl').value.trim();if(!url){setStatus('Server URL енгіз');return}
- try{setStatus('Серверге жіберілуде…');const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildSceneData())});if(!res.ok)throw new Error('HTTP '+res.status);setStatus('Серверге Scene JSON жіберілді ✅')}catch(e){console.error(e);setStatus('Server жіберу қатесі: '+e.message)}
+
+function inputVector(){
+  let x=move.x,z=move.z;
+  if(keys.has('KeyA')||keys.has('ArrowLeft'))x-=1;
+  if(keys.has('KeyD')||keys.has('ArrowRight'))x+=1;
+  if(keys.has('KeyW')||keys.has('ArrowUp'))z-=1;
+  if(keys.has('KeyS')||keys.has('ArrowDown'))z+=1;
+  const v=new THREE.Vector2(x,z);
+  if(v.lengthSq()>1)v.normalize();
+  return v;
 }
 
-function syncInputs(){if(!charObj)return;q('#px').value=charObj.position.x.toFixed(3);q('#py').value=charObj.position.y.toFixed(3);q('#pz').value=charObj.position.z.toFixed(3);q('#ry').value=THREE.MathUtils.radToDeg(charObj.rotation.y).toFixed(1);q('#sc').value=charObj.scale.x.toFixed(3)}
-function applyInputs(){if(!charObj)return;const n=id=>parseFloat(q(id).value),x=n('#px'),y=n('#py'),z=n('#pz'),ry=n('#ry'),s=n('#sc');if(Number.isFinite(x))charObj.position.x=x;if(Number.isFinite(y))charObj.position.y=y;if(Number.isFinite(z))charObj.position.z=z;if(Number.isFinite(ry))charObj.rotation.y=THREE.MathUtils.degToRad(ry);if(Number.isFinite(s)&&s>0)charObj.scale.setScalar(s);updateSizes()}
-['#px','#py','#pz','#ry','#sc'].forEach(id=>q(id).addEventListener('change',applyInputs));
+function updatePlayer(dt){
+  if(!player)return;
+  const inp=inputVector();
+  if(inp.lengthSq()<.001)return;
 
-q('#sceneJson').addEventListener('change',async e=>{try{const f=e.target.files[0];if(f)await loadSceneData(JSON.parse(await f.text()))}catch(err){setStatus('JSON қатесі: '+err.message)}});
-q('#saveJson').onclick=saveJSON;q('#mergeGlb').onclick=mergeGLB;q('#serverLoad').onclick=serverLoad;q('#serverSave').onclick=serverSave;
-q('#frame').onclick=()=>frameObject(mapObj||charObj);q('#grid').onclick=()=>gridHelper.visible=!gridHelper.visible;
-q('#fullscreen').onclick=async()=>{try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch{}};
+  const speed=(move.run||keys.has('ShiftLeft')||keys.has('ShiftRight'))?.18:.095;
+  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+  const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+  const dir=forward.multiplyScalar(-inp.y).add(right.multiplyScalar(inp.x)).normalize();
 
-const moveMode=q('#moveMode'),rotateMode=q('#rotateMode'),scaleMode=q('#scaleMode');
-function setMode(mode,btn){transform.setMode(mode);[moveMode,rotateMode,scaleMode].forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
-moveMode.onclick=()=>setMode('translate',moveMode);rotateMode.onclick=()=>setMode('rotate',rotateMode);scaleMode.onclick=()=>setMode('scale',scaleMode);
-document.querySelectorAll('[data-move]').forEach(btn=>btn.onclick=()=>{if(!charObj)return;const [axis,dir]=btn.dataset.move.split(','),step=Math.max(.001,parseFloat(q('#stepSize').value)||.1);charObj.position[axis]+=step*Number(dir);syncInputs();updateSizes()});
-q('#turnLeft').onclick=()=>{if(!charObj)return;charObj.rotation.y+=THREE.MathUtils.degToRad(15);syncInputs();updateSizes()};
-q('#scaleDown').onclick=()=>{if(!charObj)return;charObj.scale.multiplyScalar(.9);syncInputs();updateSizes()};
-q('#scaleUp').onclick=()=>{if(!charObj)return;charObj.scale.multiplyScalar(1.1);syncInputs();updateSizes()};
+  const next=player.position.clone().addScaledVector(dir,speed*dt);
+  const fy=floorY(next.x,next.z);
+  if(Number.isFinite(fy)){
+    next.y += fy-box(player).min.y;
+    player.position.copy(next);
+  }
 
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-renderer.setAnimationLoop(()=>{const dt=clock.getDelta();charMixer?.update(dt);orbit.update();renderer.render(scene,camera)});
-
-async function loadProject(){
- try{
-  setStatus('Sendstone картасы жүктелуде…');
-  const m=await loadModelURL('./assets/sendstone_new.glb','sendstone_new.glb');
-  setMapObject(m,'./assets/sendstone_new.glb');
-  setStatus('SAS кейіпкері жүктелуде…');
-  const p=await loadModelURL('./assets/sas__cs2_agent_model_blue.glb','sas__cs2_agent_model_blue.glb');
-  setCharacterObject(p,'./assets/sas__cs2_agent_model_blue.glb');
-  frameObject(mapObj);
-  setStatus('Дайын ✅ Sendstone + SAS картаға қойылды');
- }catch(e){
-  console.error(e);
-  setStatus('Модель файлдары табылмады: 3d-viewer/assets/ ішіне екі GLB керек');
-  hint.style.display='grid';
- }
+  const targetRot=Math.atan2(dir.x,dir.z);
+  let d=targetRot-player.rotation.y;
+  d=Math.atan2(Math.sin(d),Math.cos(d));
+  player.rotation.y+=d*Math.min(1,dt*10);
 }
-q('#reloadProject').onclick=loadProject;
-const sceneParam=new URLSearchParams(location.search).get('scene');
-if(sceneParam){q('#serverUrl').value=sceneParam;serverLoad()}else{loadProject()}
+
+function updateCamera(){
+  if(!player)return;
+  const b=box(player),center=b.getCenter(new THREE.Vector3());
+  const cp=Math.cos(pitch),sp=Math.sin(pitch);
+  const offset=new THREE.Vector3(
+    Math.sin(yaw)*cp*camDistance,
+    sp*camDistance + size(player).y*.55,
+    Math.cos(yaw)*cp*camDistance
+  );
+  camera.position.lerp(center.clone().add(offset),.16);
+  camera.lookAt(center.x,center.y+size(player).y*.28,center.z);
+}
+
+addEventListener('keydown',e=>keys.add(e.code));
+addEventListener('keyup',e=>keys.delete(e.code));
+
+renderer.domElement.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'){dragging=true;lastX=e.clientX;lastY=e.clientY}
+});
+addEventListener('pointerup',()=>dragging=false);
+addEventListener('pointermove',e=>{
+  if(!dragging)return;
+  yaw-=(e.clientX-lastX)*.006;
+  pitch=Math.max(-.15,Math.min(.65,pitch-(e.clientY-lastY)*.004));
+  lastX=e.clientX;lastY=e.clientY;
+});
+
+const joy=document.querySelector('#joy'),stick=document.querySelector('#stick');
+let joyId=null;
+function setJoy(e){
+  const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  let dx=e.clientX-cx,dy=e.clientY-cy;
+  const max=41,len=Math.hypot(dx,dy)||1,k=Math.min(1,max/len);
+  dx*=k;dy*=k;
+  stick.style.transform=`translate(${dx}px,${dy}px)`;
+  move.x=dx/max;move.z=dy/max;
+}
+joy.addEventListener('pointerdown',e=>{joyId=e.pointerId;joy.setPointerCapture(e.pointerId);setJoy(e)});
+joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)setJoy(e)});
+function resetJoy(){joyId=null;move.x=0;move.z=0;stick.style.transform='translate(0,0)'}
+joy.addEventListener('pointerup',resetJoy);joy.addEventListener('pointercancel',resetJoy);
+
+const run=document.querySelector('#run');
+run.addEventListener('pointerdown',()=>move.run=true);
+run.addEventListener('pointerup',()=>move.run=false);
+run.addEventListener('pointercancel',()=>move.run=false);
+
+document.querySelector('#fs').onclick=async()=>{
+  try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch{}
+};
+
+let lastTouch=null;
+renderer.domElement.addEventListener('touchstart',e=>{
+  if(e.touches.length===1)lastTouch={x:e.touches[0].clientX,y:e.touches[0].clientY};
+},{passive:true});
+renderer.domElement.addEventListener('touchmove',e=>{
+  if(e.touches.length!==1||!lastTouch)return;
+  const t=e.touches[0];
+  yaw-=(t.clientX-lastTouch.x)*.006;
+  pitch=Math.max(-.15,Math.min(.65,pitch-(t.clientY-lastTouch.y)*.004));
+  lastTouch={x:t.clientX,y:t.clientY};
+},{passive:true});
+renderer.domElement.addEventListener('touchend',()=>lastTouch=null,{passive:true});
+
+addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+renderer.setAnimationLoop(()=>{
+  const dt=Math.min(clock.getDelta(),.05);
+  mixer?.update(dt);
+  updatePlayer(dt);
+  updateCamera();
+  renderer.render(scene,camera);
+});
+start();
 </script>
-</body></html>
+</body>
+</html>
