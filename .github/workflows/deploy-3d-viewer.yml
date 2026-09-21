@@ -1,0 +1,33 @@
+name: Deploy Almas 3D Viewer to Pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - "3d-viewer/**"
+      - ".github/workflows/deploy-3d-viewer.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload viewer
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./3d-viewer
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
