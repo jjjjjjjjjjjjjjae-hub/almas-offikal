@@ -1,0 +1,1203 @@
+
+    * { box-sizing: border-box; }
+    body { font-family: Inter, Arial, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+    .no-scrollbar::-webkit-scrollbar { display:none; }
+    .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+
+    /* Аудару: дәл берілген экран үлгісіне сәйкес дербес толықэкранды бет. */
+    #page-topup { top: var(--status-height, 32px) !important; }
+    #page-transfer {
+      position:absolute!important; inset:0!important; z-index:120;
+      padding:0!important; background:#fff;
+      display:flex; flex-direction:column; overflow:hidden;
+    }
+    #page-transfer.hidden { display:none!important; }
+    .transfer-head {
+      height:36px; min-height:36px; display:flex; align-items:center;
+      gap:29px; padding:0 15px; background:white;
+    }
+    .transfer-head h2 { margin:0; font-size:15px; line-height:1.1; font-weight:700; color:#101010; }
+    .transfer-back {
+      width:24px; height:34px; flex:0 0 24px; padding:0; border:0; background:transparent;
+      display:flex; align-items:center; justify-content:center; color:#101010; cursor:pointer;
+    }
+    .transfer-back svg {width:20px;height:20px;display:block;}
+    .transfer-gap {height:153px; flex-shrink:0; border-bottom:1px solid #e9ebee;}
+    .transfer-content {
+      flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+      align-items:center; overflow-y:auto; scrollbar-width:none; text-align:center;
+      padding:27px 20px 12px;
+    }
+    .transfer-content::-webkit-scrollbar {display:none;}
+    .transfer-art {
+      flex-shrink:0; width:min(58vw,224px);height:min(58vw,224px);
+      display:flex;align-items:center;justify-content:center;background:#fff;
+    }
+    .transfer-art img {display:block;width:100%;height:100%;object-fit:contain;}
+    .transfer-title {
+      margin:51px 0 0; color:#0c1432; font-weight:800; line-height:1.3;
+      font-size:17px; max-width:360px;
+    }
+    .transfer-subtitle {
+      max-width:365px; margin:12px 0 0;
+      font-size:10.1px; line-height:1.38; font-weight:500; color:#9395a2;
+    }
+    .transfer-footer {flex-shrink:0;background:#fff;padding:0 15px 24px;}
+    .transfer-ok {
+      width:100%; height:43px; border:0; border-radius:999px;
+      background:#ffda00; color:#111; font-size:14px;
+      font-weight:700; display:flex; align-items:center; justify-content:center;cursor:pointer;
+    }
+    .transfer-ok:active { transform:scale(.985); background:#facc15; }
+    @media (max-height:720px) {
+      .transfer-gap {height:clamp(55px,18vh,130px);}
+      .transfer-content {padding-top:18px;}
+      .transfer-art {width:min(51vw,202px);height:min(51vw,202px);}
+      .transfer-title {margin-top:28px;}
+      .transfer-subtitle {margin-top:12px;}
+      .transfer-footer {padding-bottom:15px;}
+    }
+    @media (min-width:560px) {
+      .transfer-art {width:224px;height:224px;}
+    }
+
+    /* ===== Басқа карталар: screenshot-қа сәйкес екінші таб ===== */
+    [hidden] { display: none !important; }
+    #cards-top-nav {
+      display:flex; align-items:stretch; gap:0; width:100%; height:56px;
+      background:#fff; border-bottom:1px solid #e4e4e5; padding:0 13px;
+      flex-shrink:0; position:relative; z-index:12;
+    }
+    .cards-tab {
+      flex:1; min-width:0; height:56px; position:relative; border:0;
+      background:transparent; color:#85858d; font-size:12px;
+      font-weight:600; white-space:nowrap; cursor:pointer;
+    }
+    .cards-tab.active { color:#202024; font-weight:700; }
+    .cards-tab.active::after {
+      content:''; position:absolute; left:0; right:0; bottom:-1px;
+      height:2px; background:#ffcc00; border-radius:2px;
+    }
+    .cards-bell {
+      align-self:center; flex:0 0 40px; width:40px; height:40px;
+      margin-left:9px; border:0; border-radius:12px;
+      background:#f3f4f8; color:#0d1230; font-size:18px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    #page-main.show-other {background:#fff;}
+    #other-cards-panel {
+      flex:1; min-height:0; width:100%; overflow-y:auto;
+      background:white; padding:28px 15px 100px; text-align:center;
+      scrollbar-width:none;
+    }
+    #other-cards-panel::-webkit-scrollbar {display:none;}
+    .other-cards-art {width:min(57vw,232px);height:auto;display:block;margin:0 auto;}
+    .other-cards-caption {
+      color:#81828c; font-size:clamp(13px,3.75vw,15.5px);
+      font-weight:500; line-height:1.33; max-width:360px;
+      margin:21px auto 0;
+    }
+    .other-cards-add {
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      width:100%; min-height:48px; border:0; border-radius:999px;
+      background:#ffda00; color:#1b1b1d; font-size:14px; font-weight:500;
+      margin-top:30px; cursor:pointer;
+    }
+    .other-cards-add:active {background:#f3c900; transform:scale(.995);}
+    .other-cards-help {
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      max-width:250px; width:80%; min-height:45px; margin:15px auto 0;
+      background:#fff; color:#151b38; font-size:14px; font-weight:500;
+      border:1px solid #e1e4e8; border-radius:999px; cursor:pointer;
+    }
+    .other-cards-help:active {background:#f5f5f6;}
+    .other-cards-help i {font-size:17px;}
+    .cards-bottom {
+      border-top:1px solid #f0f1f5; min-height:67px; padding-top:8px;
+      padding-bottom:max(8px, env(safe-area-inset-bottom));
+    }
+    .cards-bottom .selected-cards-icon {
+      display:flex; align-items:center; justify-content:center;
+      height:25px; width:25px; border-radius:50%; background:#ffdd00; color:#141b36;
+    }
+    .cards-bottom .life-green {color:#21cd4c;}
+    .cards-bottom .qr-emblem {
+      width:59px; height:59px; border-radius:50%;
+      border:0; background:linear-gradient(145deg,#ffe81e,#ffce00 70%,#ffae20);
+      box-shadow:0 8px 16px #ffc42f55;
+    }
+    .cards-modal-overlay {
+      position:absolute; inset:0; display:flex; align-items:center;
+      justify-content:center; background:#0a102477; z-index:75; padding:20px;
+    }
+    .cards-modal {
+      width:100%; max-width:355px; border-radius:20px; background:#fff;
+      padding:23px 20px 20px; box-shadow:0 14px 35px #070d1733;
+    }
+    .cards-modal h2 {font-size:18px; font-weight:800; color:#0e1731; margin:0 0 12px;}
+    .cards-modal p {font-size:13px; line-height:1.65; color:#606777;}
+    .cards-modal input {width:100%;margin:17px 0 10px; border:1px solid #dadde5; border-radius:10px; font-size:15px; padding:12px;outline:0;}
+    .cards-modal input:focus {border-color:#e5b900;}
+    .cards-modal .cards-modal-primary {height:45px;width:100%;border:0;border-radius:100px;background:#ffdc00;font-weight:700;margin-top:14px;}
+    .cards-modal .cards-modal-secondary {width:100%;margin-top:10px;color:#727784;font-size:13px;padding:8px;}
+    @media(max-height:650px) {
+      #other-cards-panel {padding-top:14px;}
+      .other-cards-art {width:min(51vw,200px);}
+      .other-cards-add {margin-top:16px;}
+      .other-cards-caption {margin-top:12px;}
+    }
+
+
+/* QR пайдалану: бастапқыда сканер, «Түзу» арқылы өзгертілмеген QR фотосы */
+#page-qr {position:absolute;left:0;right:0;top:var(--status-height,32px);bottom:0;
+  background:#fff;z-index:55;display:flex;flex-direction:column;overflow:hidden;color:#101010;}
+#page-qr.hidden {display:none!important;}
+.qr-head {height:58px;flex-shrink:0;display:flex;align-items:center;gap:22px;
+  padding:0 20px 0 19px;background:#fff;}
+.qr-back{display:grid;place-items:center;height:43px;width:34px;font-size:23px;color:#111;}
+.qr-head h2{font-size:17px;font-weight:800;color:#121212;margin:0;}
+.qr-tabs {height:54px; flex-shrink:0;display:flex;background:#fff;border-bottom:1px solid #eee;}
+.qr-tab{position:relative;width:50%;border:0;background:#fff;color:#747474;font-size:13px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px 0 21px;}
+.qr-tab span{font-weight:500;}
+.qr-tab i {color:#1c1d29;font-size:20px;}
+.qr-tab.active{color:#151515;}
+.qr-tab.active span{font-weight:600;}
+.qr-tab.active::after{content:'';position:absolute;height:2px;background:#ffd400;left:0;right:0;bottom:-1px;}
+.qr-tab:focus-visible{outline:2px solid #ffd400;outline-offset:-3px;}
+.qr-panel{flex:1;min-height:0;position:relative;}
+.qr-panel[hidden]{display:none!important;}
+/* SCANNER */
+.qr-scan-panel{background:#15120f;isolation:isolate;overflow:hidden;}
+/* Маңызды: видео z-index:-1 болғанда қара фонның астында қалып қоятын еді. */
+#qr-camera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#191511;}
+.qr-scan-dim{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,#0b0a0944 0%,#0f0c0844 38%,#0f090766 100%);}
+.qr-scan-instructions,.qr-code-manual{z-index:3;}
+.qr-scan-square{z-index:2;pointer-events:none;}
+.qr-camera-status{position:absolute;z-index:4;top:50%;left:50%;width:calc(100% - 48px);
+ max-width:320px;transform:translate(-50%,-50%);background:#151515de;color:white;
+ text-align:center;border:1px solid #ffffff22;border-radius:16px;padding:17px 15px;
+ box-shadow:0 10px 28px #0007;}
+.qr-camera-status[hidden]{display:none!important;}
+.qr-camera-status p{font-size:12px;line-height:1.5;white-space:pre-line;margin:0 0 10px;}
+.qr-camera-status button{border:0;background:#ffda00;color:#111;font-size:13px;font-weight:700;
+ border-radius:999px;padding:11px 18px;width:100%;margin-top:8px;}
+.qr-camera-status .qr-camera-photo-btn{background:#ffffff17;color:white;border:1px solid #ffffff75;}
+#qr-native-photo{display:none;}
+.qr-scan-instructions{position:absolute;top:clamp(31px,5.4vh,61px);left:14px;right:14px;
+ display:flex;justify-content:center;align-items:flex-start;gap:12px;color:#fff;text-align:center;}
+.qr-flash{position:absolute;left:9px;top:0;border:0;background:transparent;color:#fff;
+ width:43px;height:43px;font-size:22px;}
+.qr-flash.off{opacity:.85;}
+.qr-help-text{max-width:260px;margin:8px auto 0;font-size:11px;line-height:1.35;font-weight:500;}
+.qr-scan-square{position:absolute;width:min(72vw,325px);height:min(72vw,325px);
+ left:50%;top:49%;transform:translate(-50%,-50%);border:0;background:#ffffff04;}
+.qr-corner{position:absolute;width:58px;height:58px;border-color:#ffdb00;border-style:solid;border-width:0;}
+.qr-corner.tl{top:0;left:0;border-left-width:4px;border-top-width:4px;border-top-left-radius:11px;}
+.qr-corner.tr{top:0;right:0;border-right-width:4px;border-top-width:4px;border-top-right-radius:11px;}
+.qr-corner.bl{bottom:0;left:0;border-left-width:4px;border-bottom-width:4px;border-bottom-left-radius:11px;}
+.qr-corner.br{bottom:0;right:0;border-right-width:4px;border-bottom-width:4px;border-bottom-right-radius:11px;}
+.qr-code-manual{position:absolute;left:0;right:0;bottom:clamp(54px,9vh,110px);
+ background:transparent;border:0;color:#fff;text-decoration:underline;font-size:12px;
+ font-weight:500;text-align:center;}
+/* ТҮЗУ / CREATE */
+.qr-create-panel{background:white;overflow-y:auto;scrollbar-width:none;padding-bottom:30px;}
+.qr-create-panel::-webkit-scrollbar{display:none;}
+.qr-image-button{display:block;margin:clamp(29px,5.3vh,60px) auto 0;padding:0;
+ width:min(77vw,333px);height:auto;background:transparent;border:0;cursor:zoom-in;}
+.qr-image-button img {display:block;width:100%;height:auto;image-rendering:auto;}
+.qr-enlarge-label{font-size:11px;color:#888;line-height:1.6;text-align:center;margin-top:5px;}
+.qr-available{display:flex;align-items:center;justify-content:space-between;padding:0 17%;margin:clamp(25px,5vh,55px) auto 0;
+ font-size:14px;color:#24252a;max-width:430px;}
+.qr-metro-logo {display:grid;place-items:center;width:46px;height:46px;border:1px solid #ededed;
+ border-radius:12px;background:white;box-shadow:0 2px 6px #eee7;position:relative;}
+.qr-metro-logo strong {font-size:23px;font-weight:900;color:#e6453b;line-height:1;text-shadow:1px 1px #fff;}
+.qr-metro-logo em {position:absolute;bottom:4px;font-style:normal;font-size:7px;color:#14749a;font-weight:700;}
+.qr-card-description{margin:clamp(45px,8vh,78px) 11px 0;font-size:13px;color:#28272d;}
+.qr-card{width:100%;display:flex;align-items:center;gap:10px;padding:12px 12px;
+ border:0;background:white;text-align:left;color:#282830;}
+.qr-card-icon{width:30px;height:30px;border-radius:5px;background:#64bdeb;
+ display:grid;place-items:center;color:#194774;font-size:18px;}
+.qr-card-name{flex:1;font-size:13px;}
+.qr-card-value{font-size:13px;color:#62626b;white-space:nowrap;}
+.qr-card-chevron{font-size:13px;color:#1a1e32;margin-left:3px;}
+.qr-overlay{position:absolute;inset:0;z-index:81;background:#fff;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:22px;padding:17px;}
+.qr-overlay[hidden]{display:none!important;}
+.qr-overlay button{align-self:flex-start;font-size:20px;padding:9px 12px;color:#111;}
+.qr-overlay img{display:block;width:min(95vw,400px);height:auto;max-height:75vh;object-fit:contain;}
+.qr-overlay p{font-size:13px;color:#777;text-align:center;}
+.qr-manual-overlay{position:absolute;inset:0;background:#0008;z-index:82;display:grid;place-items:center;padding:20px;}
+.qr-manual-overlay[hidden]{display:none!important;}
+.qr-manual-dialog{width:100%;max-width:360px;background:#fff;color:#151515;padding:22px;border-radius:17px;}
+.qr-manual-dialog h3{font-size:18px;font-weight:700;margin-bottom:14px;}
+.qr-manual-dialog input{width:100%;height:45px;border:1px solid #ccc;border-radius:10px;padding:10px 13px;
+ font-size:16px;outline-color:#ffd400;user-select:text;}
+.qr-manual-dialog .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
+.qr-manual-dialog button{border:0;border-radius:9px;padding:10px 15px;background:#ffdb00;font-weight:600;}
+.qr-manual-dialog button.secondary{background:#eee;}
+@media(max-height:700px) {
+ .qr-head{height:55px;} .qr-tabs{height:55px;}
+ .qr-image-button{margin-top:20px;width:min(66vw,275px);}
+ .qr-available{margin-top:22px;} .qr-card-description{margin-top:19px;}
+}
+
+  
+  /* Хабарламалар экраны: қоңырау түймесінен ашылады */
+  #page-notifications {
+    position:absolute; left:0; right:0; top:var(--status-height, 32px); bottom:0;
+    z-index:56; display:flex; flex-direction:column; background:#f4f4f4;
+    color:#0e1530; overflow:hidden;
+  }
+  #page-notifications.hidden { display:none !important; }
+  .notifications-header {
+    background:#fff; flex-shrink:0; height:64px; display:flex; align-items:center;
+    gap:20px; padding:0 18px;
+  }
+  .notifications-back {
+    background:transparent; border:0; width:34px; height:40px;
+    padding:0; color:#111932; display:flex; justify-content:center;
+    align-items:center; cursor:pointer;
+  }
+  .notifications-header h2 {
+    font-size:17px; line-height:1.2; font-weight:800; color:#101632; margin:0;
+  }
+  .notifications-body {
+    background:#f4f4f4; flex:1; min-height:0; overflow-y:auto;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; padding:clamp(45px,6.7vh,62px) 16px 20px;
+  }
+  .notifications-art {
+    width:min(67vw,238px); height:auto; max-width:100%;
+    flex-shrink:0; display:block;
+  }
+  .notifications-empty-title {
+    font-size:clamp(16px,4.05vw,17px); font-weight:800;
+    margin:clamp(38px,6.0vh,55px) 0 0; color:#0e1530;
+    line-height:1.35;
+  }
+  .notifications-empty-subtitle {
+    font-size:clamp(10px,2.65vw,12px); font-weight:500;
+    margin:13px 0 0; line-height:1.55; color:#858692;
+    max-width:360px;
+  }
+  @media(max-height:690px) {
+    .notifications-body {padding-top:34px;}
+    .notifications-art {width:min(53vw,190px);}
+    .notifications-empty-title {margin-top:28px;}
+  }
+
+  
+  #page-routes svg {display:inline-block;flex-shrink:0;vertical-align:middle;}
+  #page-routes .route-qr-button svg{width:30px;height:30px;}
+  #page-routes .route-selected-icon svg{width:19px;height:19px;}
+  #page-routes .route-category svg{width:17px;height:17px;}
+  #page-routes .route-fav-chip svg{width:17px;height:17px;}
+  #page-routes .route-bottom-button svg{width:23px;height:23px;}
+  #page-routes .route-menu-btn svg{width:21px;height:21px;}
+  #page-routes .route-place-icon svg{width:24px;height:24px;}
+  #page-routes .route-reload svg{width:23px;height:23px;}
+  /* БАҒЫТТАР: ONAY үлгісіндегі Алматының қоғамдық көлік каталогы */
+  #page-routes { position:absolute; inset:var(--status-height,32px) 0 0; z-index:48;
+     display:flex; flex-direction:column; overflow:hidden; background:#f4f5fa; color:#11162f; }
+  #page-routes.hidden {display:none !important;}
+  .route-top {background:#fff;flex-shrink:0;}
+  .route-citybar {height:59px; display:flex; align-items:center; padding:0 15px; gap:12px;}
+  .route-place-icon {color:#0d1536; font-size:21px; width:20px;text-align:center;}
+  .route-location-btn {display:flex;gap:18px;align-items:center; justify-content:center; flex:1;
+      height:49px; border:0; background:#fff;color:#34384e;font-size:14px;font-weight:500;cursor:pointer;}
+  .route-location-btn i{color:#0d1536;font-size:13px;}
+  .route-city-actions{display:flex;gap:9px;}
+  .route-menu-btn,.route-reload {height:44px;background:#f3f4f9;border:0;border-radius:13px;color:#0d1536;
+       display:flex;align-items:center;justify-content:center;gap:20px;cursor:pointer;}
+  .route-menu-btn{min-width:107px;padding:0 12px;font-size:13px;}
+  .route-menu-btn i{font-size:21px;}
+  .route-reload{width:43px;font-size:22px;}
+  .route-main-tabs {display:grid; grid-template-columns:1fr 1fr;height:53px;align-items:stretch; border-bottom:1px solid #e4e6e9;}
+  .route-main-tab {background:#fff;border:0;position:relative;color:#777;font-size:14px;font-weight:600;cursor:pointer;}
+  .route-main-tab.active {color:#202022;}
+  .route-main-tab.active:after {position:absolute;content:'';height:2px;background:#ffda00;left:0;right:0;bottom:-1px;}
+  .route-search-and-categories {background:#fff;flex-shrink:0;}
+  .route-search-box {margin:15px 15px 14px;border:1px solid #dedfe5;border-radius:7px;height:43px;
+      display:flex;align-items:center;gap:9px;padding:0 13px;background:#fff;}
+  .route-search-box input {border:0;outline:none;width:100%;min-width:0;font-size:14px;background:transparent;
+     color:#11162f; font-family:inherit;}
+  .route-search-box input::placeholder{color:#888c99;}
+  .route-search-clear{border:0;background:transparent;color:#999;cursor:pointer;display:none;}
+  .route-category-list{display:grid; grid-template-columns:1fr 1.1fr .86fr;height:50px;border-bottom:1px solid #e5e6ec;}
+  .route-category{position:relative;white-space:nowrap;border:0;background:#fff;color:#7f828c;
+        display:flex;gap:9px;align-items:center;justify-content:center; font-size:12px;font-weight:500;cursor:pointer;padding:0 4px;}
+  .route-category i{font-size:15px;color:#171b38;}
+  .route-category.active{color:#1e1d22;}
+  .route-category.active i{color:#f2ae00;}
+  .route-category.active:after{content:'';position:absolute;bottom:-1px;left:0;right:0;background:#ffd400;height:2px;}
+  .route-main-area {flex:1;min-height:0;position:relative;background:#f3f4fa;}
+  .route-catalog-scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding:22px 21px 132px;scrollbar-width:none;}
+  .route-catalog-scroll::-webkit-scrollbar{display:none;}
+  .route-number-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px 19px;}
+  .route-tile{height:64px;min-width:0;border:0;border-radius:7px;background:#fff;color:#11152d;
+       font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .route-tile:active{transform:scale(.97);background:#fff2b6;}
+  .route-number-grid.list-view{grid-template-columns:1fr 1fr;gap:10px;}
+  .route-number-grid.list-view .route-tile{height:48px;justify-content:flex-start;padding-left:20px;}
+  .route-info{margin-top:15px;font-size:10px;color:#8c909b;line-height:1.5;text-align:center;}
+  .route-info a{color:#6570a4;text-decoration:underline;}
+  .route-empty{text-align:center;padding:35px 10px;color:#85899a;font-size:13px;}
+  .route-favorites{position:absolute;bottom:0;left:0;right:0;pointer-events:none;
+    background:linear-gradient(0deg,#f4f5fa 75%,rgba(244,245,250,0));padding:32px 15px 15px;z-index:3;}
+  .route-fav-row{display:flex;align-items:center;gap:8px;}
+  .route-fav-chip{pointer-events:auto;display:flex;align-items:center;justify-content:center;gap:8px;
+      height:37px;border:0;background:#fff;border-radius:13px;color:#161a38;
+      font-size:12px;font-weight:700;padding:0 13px;cursor:pointer;}
+  .route-fav-chip.bookmark{width:39px;padding:0;font-size:19px;}
+  .route-fav-chip i{font-size:15px;color:#9297a8;}
+  .route-fav-chip.active{color:#12172f;background:#fff6cc;}
+  .route-fav-chip.active i{color:#f1b700;}
+  .route-bottom-nav{
+     height:92px; position:relative; background:#fff; border-radius:28px 28px 0 0;
+     flex-shrink:0; display:grid; grid-template-columns:1fr 1fr 1.18fr 1fr 1fr;
+     align-items:end; justify-content:space-between; z-index:5;
+     padding:12px 10px calc(8px + env(safe-area-inset-bottom));
+     box-shadow:0 -2px 14px rgba(28,34,57,.045);
+  }
+  .route-bottom-button{display:flex;align-items:center;justify-content:flex-end;flex-direction:column;gap:6px;
+     min-width:0;border:0;background:none;color:#0a1233;font-size:12px;cursor:pointer;padding:0;line-height:1;}
+  .route-bottom-button svg{width:34px;height:34px;}
+  .route-bottom-button .route-selected-icon{width:42px;height:42px;background:#ffd400;
+      border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .route-bottom-button .route-selected-icon svg{width:25px;height:25px;}
+  .route-qr-holder{height:72px;position:relative;display:flex;justify-content:center;align-items:flex-start;pointer-events:none;}
+  .route-qr-button{pointer-events:auto;position:absolute;top:-46px;width:90px;height:90px;border:0;border-radius:50%;
+       background:radial-gradient(circle at 30% 25%, #fff58d 0%, #ffe83d 18%, #ffd313 55%, #ffbf00 100%);box-shadow:0 10px 24px rgba(255,206,23,.40), 0 0 28px rgba(255,211,34,.18);
+       font-size:0;color:#080a13;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .route-qr-button svg{width:38px;height:38px;}
+  @media(max-height:680px){.route-citybar{height:48px;}.route-main-tabs{height:45px;}
+    .route-search-box{margin-top:10px;margin-bottom:8px;}.route-category-list{height:44px;}
+    .route-tile{height:52px;}.route-bottom-nav{height:86px;}}
+  @media(max-width:360px){
+    .route-bottom-nav{height:86px;padding-left:6px;padding-right:6px;}
+    .route-bottom-button{font-size:11px;}
+    .route-bottom-button svg{width:30px;height:30px;}
+    .route-bottom-button .route-selected-icon{width:38px;height:38px;}
+    .route-bottom-button .route-selected-icon svg{width:22px;height:22px;}
+    .route-qr-button{width:84px;height:84px;top:-43px;}
+    .route-qr-button svg{width:35px;height:35px;}
+  }
+  .route-trip-view{background:#fff; flex:1; padding:24px 18px;overflow-y:auto;}
+  .route-trip-view[hidden],.route-main-area[hidden],.route-search-and-categories[hidden]{display:none !important;}
+  .route-trip-view h3{font-size:17px;font-weight:800;margin:5px 0 9px;}
+  .route-trip-view p{color:#818797;font-size:12px;margin-bottom:19px;line-height:1.55;}
+  .route-trip-view label{display:block;font-size:12px;font-weight:700;margin:12px 0 6px;}
+  .route-trip-view input{display:block;width:100%;height:47px;border:1px solid #e1e2e8;border-radius:10px;
+      padding:0 13px;font-size:14px;outline:none;}
+  .route-trip-search{width:100%;background:#ffda00;border:0;border-radius:28px;height:47px;font-size:14px;font-weight:700;margin-top:24px;}
+  .route-detail-overlay{position:absolute;inset:0;background:rgba(16,20,38,.35);z-index:12;
+    display:flex;align-items:flex-end;justify-content:center;}
+  .route-detail-overlay[hidden]{display:none !important;}
+  .route-detail-sheet{width:100%;background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 30px;min-height:215px;}
+  .route-detail-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .route-detail-head h2{font-size:19px;font-weight:800;margin:0;}
+  .route-close-sheet{height:32px;width:32px;border:0;border-radius:50%;background:#f3f4f8;font-size:17px;}
+  .route-detail-sheet p{font-size:13px;color:#656b7e;line-height:1.6;margin:17px 0;}
+  .route-detail-link{display:flex;align-items:center;justify-content:center;width:100%;height:43px;
+      background:#ffda00;border-radius:24px;text-decoration:none;font-size:13px;font-weight:700;color:#11162f;}
+  @media(min-width:375px){.route-number-grid{gap:11px 19px;}.route-tile{height:64px;}}
+  @media(max-width:350px){.route-citybar{gap:5px;padding:0 8px;}.route-menu-btn{gap:7px;min-width:83px;}
+     .route-number-grid{gap:9px;}.route-catalog-scroll{padding-left:12px;padding-right:12px;}
+     .route-category{font-size:10px;gap:5px;}.route-fav-chip{font-size:11px;padding:0 8px;}}
+
+
+
+    /* === Карталарым: 23.10 суреттегі орналасу және өлшемдер === */
+    #cards-top-nav {height:48px;padding:0 15px;background:#fff;}
+    #cards-top-nav .cards-tab {height:48px; font-size:12.5px;}
+    #cards-top-nav .cards-bell {height:38px;width:38px;flex-basis:38px; border-radius:11px;}
+    #page-main {background:#f5f5f7;}
+    #my-cards-panel {padding:24px 0 158px; background:#f5f5f7; overflow-x:hidden; min-height:0;}
+    #my-cards-panel[hidden] {display:none!important;}
+    .onay-card-slider {position:relative;margin:0 18px 0 6px;}
+    .onay-card-slider:after {content:"";position:absolute;z-index:0;top:13px;bottom:13px;right:-79px;width:72px;border-radius:12px;background:linear-gradient(105deg,#c9a4fa,#9864eb);}
+    .onay-main-card {position:relative; z-index:1; background:#7fc6ed; height:123px; border-radius:12px; overflow:hidden; padding:17px 15px 15px;box-shadow:0 1.5px 3px rgba(17,24,39,.15);color:#07102a;}
+    .onay-card-watermark {position:absolute;height:100%;width:65%;right:0;top:0;pointer-events:none;}
+    .onay-card-header,.onay-card-footer {display:flex;justify-content:space-between;position:relative;z-index:1;}
+    .onay-virtual-label {font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:1px;letter-spacing:.1px;line-height:19px;color:#0b1934;}
+    .onay-virtual-label svg {height:17px;width:17px;}
+    .onay-kids {display:inline-flex; align-items:center; justify-content:center; margin-top:11px;min-width:77px;height:26px;padding:0 15px;border-radius:14px;background:#0b68d9;color:white;font-size:12px;font-weight:500;}
+    .onay-card-right {text-align:right;}
+    .onay-balance-row {display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:25px;font-weight:800;line-height:30px;letter-spacing:-.3px;}
+    .onay-balance-row .onay-card-square {margin-left:1px;}
+    .onay-card-square {height:30px;width:30px;border-radius:9px;border:0;background:#daebf5;color:#121630;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}
+    .onay-card-square svg {width:18px;height:18px;}
+    .onay-ride-count {font-size:10.5px;font-weight:500;color:#c42d46;margin-top:4px;letter-spacing:-.1px;}
+    .onay-card-footer {align-items:center;margin-top:14px;}
+    .onay-show-qr {height:30px;padding:0 11px;border-radius:12px;border:0;background:#deedf5;color:#232739;display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:500;}
+    .onay-show-qr svg {height:17px;width:17px;}
+    .onay-next {height:28px;width:28px;}
+    .onay-next svg {height:17px;width:17px;}
+    .onay-dots {height:11px;display:flex;justify-content:center;align-items:center;gap:9px;margin:10px 0 14px;}
+    .onay-dot {width:10px;height:10px;border-radius:50%;background:#dce0e7;}
+    .onay-dot.active {background:#7bc7ee;}
+    .onay-quick-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 15px;}
+    .onay-action {height:62px;border:0;background:#f1f2f8;border-radius:15px;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;color:#0d1433;font-weight:500;font-size:14px;white-space:nowrap;cursor:pointer;}
+    .onay-action svg {width:19px;height:19px;flex-shrink:0;}
+    .onay-action-muted {color:#797e91;}
+    .onay-action:active,.onay-service:active {transform:scale(.985);}
+    .onay-promo-section {background:#fff;margin-top:19px;padding:7px 15px 0;}
+
+    /* Карта мен жарнама слайдері */
+    .onay-card-slider {position:relative; overflow:hidden; padding:0 15px 0 15px;}
+    .onay-card-track {display:flex; gap:10px; transition:transform .35s ease; touch-action:pan-y;}
+    .onay-card-slide {flex:0 0 calc(100% - 38px);}
+    .onay-main-card {position:relative; border-radius:18px; padding:14px 18px 15px; min-height:174px; overflow:hidden; color:#0c1637; box-shadow:0 1px 2px rgba(0,0,0,.04);}
+    .onay-main-card.theme-blue {background:#86c8ef;}
+    .onay-main-card.theme-purple {background:#c4a7f3;}
+    .onay-main-card.theme-yellow {background:#f5db73;}
+    .onay-main-card .onay-card-watermark {position:absolute; right:-6px; bottom:-8px; width:215px; height:132px; opacity:.66; pointer-events:none;}
+    .onay-main-card.theme-purple .onay-card-watermark path:first-child {fill:#cbb5f4;}
+    .onay-main-card.theme-purple .onay-card-watermark path:last-child {fill:#e2d5ff;}
+    .onay-main-card.theme-yellow .onay-card-watermark path:first-child {fill:#edcb4f;}
+    .onay-main-card.theme-yellow .onay-card-watermark path:last-child {fill:#fff0a6;}
+    .onay-dots {display:flex; justify-content:center; gap:11px; padding-top:12px;}
+    .onay-dot {width:11px;height:11px;border-radius:999px;background:#d8dde6; cursor:pointer;}
+    .onay-dot.active {background:#6ebdef;}
+    .onay-dot.theme-purple-active {background:#b98bf0;}
+    .onay-dot.theme-yellow-active {background:#f0d13d;}
+    .onay-promo-section {background:#fff; margin-top:19px; padding:7px 15px 0;}
+    .onay-promo-slider {overflow:hidden; border-radius:11px;}
+    .onay-promo-track {display:flex; transition:transform .35s ease; touch-action:pan-y;}
+    .onay-promo-slide {flex:0 0 100%;}
+    .onay-promo {display:block; width:100%; height:auto; aspect-ratio:657/175; object-fit:fill; border-radius:11px;}
+
+    .onay-services {padding:23px 16px 30px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px 12px;}
+    .onay-service {min-width:0; min-height:114px; padding:10px 3px 12px; background:white;border:1px solid #ededee;box-shadow:0px 1.5px 2.5px rgba(18,19,33,.12);border-radius:19px;color:#3e4055;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:6px;cursor:pointer;font-size:11px;line-height:1.4;font-weight:500;}
+    .onay-service img {width:52px;height:52px;object-fit:cover;}
+    .onay-service span {display:block;}
+    .cards-peek-sheet {position:absolute;bottom:65px;left:0;right:0;height:101px;background:#fff;border-radius:27px 27px 0 0;z-index:19;padding:11px 15px 0;pointer-events:none;overflow:hidden;}
+    .cards-peek-grabber {height:4px;width:83px;border-radius:999px;background:#e2e5eb;margin:0 auto;}
+    .cards-peek-preview {height:90px;background:#f2f2f2;border-radius:19px;margin-top:27px;}
+    #page-main.show-other .cards-peek-sheet {display:none;}
+    .onay-bottom-bar {
+      position:absolute; left:0; right:0; bottom:0; z-index:35;
+      display:grid; grid-template-columns:1fr 1fr 1.18fr 1fr 1fr;
+      align-items:end; justify-content:space-between;
+      min-height:92px; height:92px;
+      padding:12px 10px calc(8px + env(safe-area-inset-bottom));
+      border:0; border-radius:28px 28px 0 0;
+      background:#ffffff;
+      box-shadow:0 -2px 14px rgba(28,34,57,.045);
+    }
+    .onay-bottom-action {
+      min-height:62px; border:0; background:transparent;
+      display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+      gap:6px; color:#0a1233; font-size:12px; line-height:1;
+      font-weight:500; cursor:pointer; white-space:nowrap; padding:0;
+    }
+    .onay-bottom-action > svg {width:34px;height:34px;}
+    .onay-bottom-action span:last-child {display:block; font-size:12px; line-height:1.06;}
+    .onay-nav-card-icon {
+      display:flex;align-items:center;justify-content:center;
+      width:42px;height:42px;border-radius:50%;
+      background:#ffd400; box-shadow:0 1px 2px rgba(0,0,0,.04) inset;
+    }
+    .onay-nav-card-icon svg {width:28px;height:28px;}
+    .onay-heart {color:#2fda49; width:34px !important; height:34px !important;}
+    .onay-menu-avatar {display:block;position:relative;height:38px;width:38px;}
+    .onay-menu-avatar svg {width:38px;height:38px;}
+    .onay-menu-dot {position:absolute;right:1px;top:1px;width:9px;height:9px;border-radius:50%;background:#e81a39;border:2px solid #fff;}
+    .onay-nav-qr-holder {
+      height:72px; position:relative; display:flex; justify-content:center; align-items:flex-start;
+      pointer-events:none;
+    }
+    .onay-nav-qr {
+      pointer-events:auto; position:absolute; top:-46px;
+      width:90px!important; height:90px!important; border-radius:50%!important; border:0!important;
+      display:flex; align-items:center; justify-content:center;
+      background:radial-gradient(circle at 30% 25%, #fff58d 0%, #ffe83d 18%, #ffd313 55%, #ffbf00 100%)!important;
+      box-shadow:0 10px 24px rgba(255,206,23,.40), 0 0 28px rgba(255,211,34,.18)!important;
+      color:#000!important;
+    }
+    .onay-nav-qr svg {width:38px;height:38px;}
+    @media (max-width:360px){
+      .onay-bottom-bar{min-height:86px;height:86px;padding-left:6px;padding-right:6px;}
+      .onay-bottom-action{font-size:11px;}
+      .onay-bottom-action > svg{width:30px;height:30px;}
+      .onay-nav-card-icon{width:38px;height:38px;}
+      .onay-nav-card-icon svg{width:26px;height:26px;}
+      .onay-nav-qr{width:84px!important;height:84px!important;top:-43px;}
+      .onay-nav-qr svg{width:35px;height:35px;}
+      .onay-menu-avatar{width:34px;height:34px;}
+      .onay-menu-avatar svg{width:34px;height:34px;}
+    }
+    @media (max-width:345px){.onay-card-slider{margin-right:12px;}.onay-service{min-height:105px;font-size:10px;}.onay-service img{width:48px;height:48px;}.onay-balance-row{font-size:22px;}}
+    @media (max-height:620px){#my-cards-panel{padding-top:15px;}.cards-peek-sheet{height:70px;}.onay-services{padding-top:15px;}}
+
+
+    /* Fallback layout: works locally even when Tailwind CDN is unavailable. */
+    html,body{margin:0!important;width:100%;height:100%;}
+    body{display:flex;align-items:center;justify-content:center;background:#0f172a;min-height:100vh;}
+    #onay-app-root{display:flex;flex-direction:column;flex-shrink:0;position:relative;overflow:hidden;width:100%;max-width:410px;height:100dvh;background:#f8f9fa;}
+    #app-statusbar{height:32px;padding:4px 22px;display:flex;flex-shrink:0;align-items:center;justify-content:space-between;background:#fff;position:relative;z-index:60;font-size:12px;color:#3c3f45;}
+    #app-statusbar > div{display:flex;align-items:center;gap:5px;}
+    #page-main{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+    #my-cards-panel{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;}
+    #my-cards-panel::-webkit-scrollbar{display:none;}
+    .hidden{display:none!important;}
+    button{font-family:inherit;}
+    @media(min-width:640px){#onay-app-root{height:844px;border-radius:34px;border:8px solid #263449;}body{padding:14px;}}
+
+  
+  /* Қызмет беттері */
+  .service-page{position:absolute;inset:var(--status-height,32px) 0 0;z-index:66;background:#f3f3f3;display:flex;flex-direction:column;}
+  .service-page.hidden{display:none!important;}
+  .service-header{background:#fff;height:88px;padding:18px 22px 16px;border-bottom:1px solid #ececec;display:flex;align-items:center;gap:18px;flex-shrink:0;}
+  .service-back{width:38px;height:38px;border:0;background:transparent;border-radius:50%;display:grid;place-items:center;color:#111537;font-size:21px;}
+  .service-title{font-size:24px;font-weight:700;color:#171b34;line-height:1.15;}
+  .service-help{margin-left:auto;width:44px;height:44px;border-radius:14px;border:0;background:#f4f4fa;color:#161a3a;display:grid;place-items:center;font-size:24px;font-weight:700;}
+  .service-top-pill{margin-left:auto;min-width:108px;height:36px;border-radius:999px;background:#39d676;color:#0a3f19;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:18px;padding:0 18px;}
+  .service-scroll{flex:1;overflow-y:auto;padding:24px 26px 34px;}
+  .service-card-row{display:flex;align-items:center;gap:14px;padding:20px 0 8px;color:#171b34;}
+  .mini-virtual-icon{width:44px;height:30px;border-radius:7px;background:#7dc5ee;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);}
+  .mini-virtual-icon::before{content:'';width:18px;height:18px;border-radius:50%;background:#061435;display:block;}
+  .mini-virtual-icon::after{content:'';position:absolute;bottom:4px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:13px solid #fff;}
+  .service-select-arrow{margin-left:auto;font-size:22px;color:#171b34;}
+  .codepay-subtitle{font-size:15px;color:#24294d;margin-bottom:24px;line-height:1.45;}
+  .codepay-input-wrap{margin-top:18px;border:2px solid #efc321;border-radius:17px;background:#fff;padding:16px 20px 16px;position:relative;min-height:92px;}
+  .codepay-input-wrap label{position:absolute;top:-12px;left:16px;background:#f3f3f3;padding:0 10px;color:#a8a8b2;font-size:15px;}
+  .codepay-input{width:100%;border:0;outline:0;font-size:34px;letter-spacing:3px;color:#1a1a1a;background:transparent;}
+  .codepay-hint{text-align:center;color:#b7b7c0;font-size:13px;margin:22px 0 26px;line-height:1.4;}
+  .onay-yellow-btn{width:100%;height:76px;border:0;border-radius:999px;background:#ffdd00;color:#10142b;font-weight:700;font-size:24px;box-shadow:0 2px 0 rgba(0,0,0,.03);}
+  .onay-outline-btn{width:100%;height:74px;border-radius:999px;background:#f3f3f3;border:2px solid #dfdfe7;color:#1a1e37;font-size:18px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:18px;}
+  .promo-ya{margin-top:74px;border-radius:6px;background:linear-gradient(180deg,#ff5a00 0%,#ff4d00 100%);padding:18px 16px 20px;color:#ffef3b;text-align:center;overflow:hidden;position:relative;min-height:324px;}
+  .promo-ya .small-top{font-size:18px;font-weight:700;margin-bottom:10px;}
+  .promo-ya .big{font-size:27px;line-height:1.08;font-weight:800;}
+  .promo-ya .sub{font-size:18px;color:#ffe880;font-weight:500;margin-top:8px;}
+  .promo-ya .phone{width:148px;height:188px;border-radius:28px;background:#0f1018;margin:18px auto 10px;position:relative;box-shadow:0 16px 36px rgba(0,0,0,.22);}
+  .promo-ya .phone::before{content:'';position:absolute;inset:16px;border-radius:18px;background:radial-gradient(circle at 50% 45%, #f49c00 0, #b0007c 38%, #20002f 68%, #0a0c18 100%);} 
+  .promo-ya .phone::after{content:'Менің Толқыным';position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);color:#fff;font-size:14px;font-weight:700;white-space:nowrap;}
+  .promo-ya .fine{position:absolute;left:10px;right:10px;bottom:10px;color:#ffd59e;font-size:10px;line-height:1.35;}
+  .empty-ticket-illustration{width:206px;height:206px;border-radius:50%;background:#f4f1e6;margin:18px auto 22px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .empty-ticket-illustration .ticket-shape{width:118px;height:64px;border-radius:12px;background:#f3ca4b;position:relative;transform:rotate(-12deg);box-shadow:0 1px 0 rgba(0,0,0,.03);} 
+  .empty-ticket-illustration .ticket-shape::before,.empty-ticket-illustration .ticket-shape::after{content:'';position:absolute;top:22px;width:16px;height:16px;background:#f4f1e6;border-radius:50%;}
+  .empty-ticket-illustration .ticket-shape::before{left:-8px}.empty-ticket-illustration .ticket-shape::after{right:-8px}
+  .empty-ticket-illustration .hand-line{position:absolute;border:3px solid #222;border-color:#222 transparent transparent transparent;border-radius:60% 60% 0 0;}
+  .empty-ticket-illustration .line1{width:104px;height:70px;right:35px;top:48px;transform:rotate(14deg);} 
+  .empty-ticket-illustration .line2{width:82px;height:52px;right:60px;top:68px;transform:rotate(4deg);} 
+  .empty-ticket-illustration .line3{width:82px;height:52px;right:38px;top:91px;transform:rotate(-10deg);} 
+  .tickets-empty-text{font-size:16px;text-align:center;color:#a4a4ad;font-weight:600;line-height:1.5;margin-bottom:44px;}
+  .promo-tournament{border-radius:14px;background:#061149;color:#fff;padding:20px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px;overflow:hidden;min-height:142px;}
+  .promo-tournament .text{font-size:22px;font-weight:800;line-height:1.08;max-width:58%;}
+  .promo-tournament .date{margin-top:18px;display:inline-block;padding:10px 16px;border-radius:999px;background:#ffdd34;color:#10142b;font-weight:700;font-size:18px;}
+  .promo-tournament .shapes{flex:1;align-self:stretch;position:relative;}
+  .promo-tournament .shapes::before,.promo-tournament .shapes::after{content:'';position:absolute;border-radius:18px;transform:rotate(28deg);} 
+  .promo-tournament .shapes::before{width:100px;height:100px;right:24px;top:5px;background:radial-gradient(circle at 30% 30%, #ffd84e 0, #ffd84e 38%, #6b43ff 39%, #1a0e64 76%, transparent 77%);} 
+  .promo-tournament .shapes::after{width:84px;height:84px;right:0;bottom:0;background:linear-gradient(135deg,#7b36ff,#2d1c97);box-shadow:inset 0 0 0 18px transparent;clip-path:polygon(0 20%,20% 0,48% 30%,78% 0,100% 20%,70% 50%,100% 80%,80% 100%,50% 70%,20% 100%,0 80%,30% 50%);} 
+  .monthly-overlay{position:absolute;inset:0;background:rgba(0,0,0,.27);display:flex;flex-direction:column;justify-content:flex-end;}
+  .monthly-sheet{background:#fff;border-radius:34px 34px 0 0;min-height:calc(100% - 34px);padding:14px 0 0;display:flex;flex-direction:column;overflow:hidden;}
+  .monthly-handle{width:132px;height:8px;border-radius:999px;background:#d9dde5;margin:0 auto 24px;}
+  .monthly-topbar{display:flex;align-items:center;justify-content:center;position:relative;padding:0 24px 18px;}
+  .monthly-title{font-size:24px;font-weight:700;color:#171b34;text-align:center;max-width:70%;line-height:1.18;}
+  .monthly-help{position:absolute;right:22px;top:-2px;width:46px;height:46px;border-radius:14px;border:0;background:#f4f4fa;color:#171b34;font-size:24px;}
+  .monthly-body{flex:1;overflow-y:auto;padding:0 28px 16px;}
+  .monthly-location{height:78px;border-radius:16px;background:#f4f4fa;display:flex;align-items:center;padding:0 18px;gap:14px;color:#1b1f38;font-size:18px;font-weight:500;margin-bottom:28px;}
+  .monthly-card{border:2px solid #e6b424;border-radius:16px;padding:18px 18px 18px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;background:#fff;margin-bottom:22px;}
+  .monthly-card-title{font-size:19px;font-weight:700;color:#1a1e38;line-height:1.25;}
+  .monthly-card-sub{font-size:16px;color:#35384b;line-height:1.4;margin-top:8px;}
+  .monthly-price{font-size:20px;font-weight:800;color:#111538;white-space:nowrap;padding-top:10px;}
+  .monthly-info{border-radius:16px;background:#f4f4fa;padding:18px 18px;display:flex;align-items:flex-start;gap:18px;color:#35394c;font-size:16px;line-height:1.45;}
+  .monthly-bottom{padding:18px 28px 30px;border-top:1px solid #f0f0f4;}
+  .monthly-meta{display:flex;justify-content:space-between;align-items:flex-end;font-size:16px;color:#9a9aa6;font-weight:600;margin-bottom:18px;}
+  .monthly-meta strong{display:block;color:#111538;font-size:21px;font-weight:800;margin-top:4px;}
+  .monthly-paybtn{width:100%;height:74px;border:0;border-radius:999px;background:#ffdd00;color:#111538;font-weight:700;font-size:21px;}
+
+
+/* QR-ды қозғамай, беттегі мәтін/арақашықтықтарды 2-суретке жақындату */
+.qr-create-panel{background:#fff;padding-bottom:max(28px,env(safe-area-inset-bottom));}
+.qr-image-button{margin:clamp(18px,3vh,32px) auto 0;width:min(73vw,305px);max-width:100%;}
+.qr-enlarge-label{font-size:11px;color:#92939b;margin:10px auto 0;}
+.qr-available{margin:clamp(52px,8vh,74px) auto 0;padding:0 18%;max-width:430px;min-height:44px;font-size:15px;}
+.qr-metro-logo{width:48px;height:48px;background:#fff;border:1px solid #eff0f4;box-shadow:0 1px 6px #1214330a;border-radius:12px;}
+.qr-card-description{margin:clamp(44px,7.5vh,75px) 11px 0;font-size:13px;line-height:1.35;}
+.qr-card{padding:9px 12px 18px;min-height:60px;gap:9px;}
+.qr-card-name{font-size:15px;color:#292b33;}
+.qr-card-value{font-size:14px;color:#292b33;margin-right:2px;}
+.metro-card-icon{flex-shrink:0;width:30px;height:30px;border-radius:6px;display:grid;place-items:center;overflow:hidden;}
+.metro-card-icon.is-blue{background:#78c2ec;}
+.metro-card-icon.is-purple{background:#c6a3f7;}
+.metro-card-icon .onay-up-logo{width:30px;height:30px;display:block;}
+#qr-card-icon{color:#061536;}
+#qr-card-icon.is-blue .onay-up-logo path:last-child{fill:#78c2ec;}
+#qr-card-icon.is-purple .onay-up-logo path:last-child{fill:#c6a3f7;}
+.qr-back{border:0;background:transparent;cursor:pointer;}
+/* Sheet: mobile fullscreen modal – үлгідегідей қара фон мен төменгі ақ бет */
+.metro-chooser-overlay{position:absolute;inset:0;z-index:180;background:#000;display:flex;align-items:flex-end;justify-content:center;}
+.metro-chooser-overlay[hidden]{display:none!important;}
+.metro-chooser-sheet{position:relative;width:100%;background:#fff;border-radius:26px 26px 0 0;min-height:300px;padding:0 15px max(20px,env(safe-area-inset-bottom));box-shadow:0 -1px 0 #fff5;}
+.metro-chooser-handle{width:82px;height:5px;background:#e0e4ec;border-radius:50px;margin:12px auto 39px;}
+.metro-chooser-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:36px;}
+.metro-chooser-heading h2{font-size:15.5px;font-weight:800;letter-spacing:-.2px;color:#071039;line-height:1.3;margin:0;}
+.metro-chooser-close{border:0;padding:0;margin:0;background:transparent;color:#071039;display:grid;place-items:center;width:32px;height:32px;cursor:pointer;}
+.metro-chooser-caption{color:#c2c4cc;font-size:12px;font-weight:400;text-align:center;margin:3px 0 18px;}
+.metro-chooser-options{display:flex;flex-direction:column;gap:1px;}
+.metro-chooser-option{display:flex;align-items:center;gap:13px;text-align:left;width:100%;min-height:65px;background:#fff;border:0;padding:8px 2px;color:#0d1334;font-family:inherit;cursor:pointer;}
+.metro-choice-mark{border:1.5px solid #dfe3ec;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;}
+.metro-choice-mark svg{opacity:0;}
+.metro-chooser-option.selected .metro-choice-mark{background:#ffcd00;border-color:#ffcd00;}
+.metro-chooser-option.selected .metro-choice-mark svg{opacity:1;}
+.metro-choice-name{font-size:15px;font-weight:500;line-height:1.1;display:flex;flex-direction:column;gap:4px;flex:1;}
+.metro-choice-balance{margin-left:auto;color:#171719;font-size:13.5px;white-space:nowrap;font-weight:500;align-self:center;padding-right:10px;}
+.metro-needs-topup{font-size:11px;color:#d82d31;display:inline-block;width:max-content;background:#fce3e4;padding:5px 7px;border-radius:7px;font-weight:600;line-height:1;}
+@media(max-height:640px){.metro-chooser-sheet{min-height:287px}.metro-chooser-handle{margin-bottom:24px}.metro-chooser-caption{margin-bottom:7px}.metro-chooser-option{min-height:62px}}
+@media(max-width:340px){.metro-chooser-sheet{padding-left:13px;padding-right:13px}.metro-chooser-option{gap:10px}}
+
+/* Жаңа анық попаптар/шиттер */
+.codepay-help-overlay,.monthly-rules-overlay,.tickets-sheet-overlay{position:absolute;inset:0;z-index:190;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px;}
+.codepay-help-overlay[hidden],.monthly-rules-overlay[hidden],.tickets-sheet-overlay[hidden]{display:none!important;}
+.codepay-help-card{width:min(100%,360px);background:#fff;border-radius:22px;box-shadow:0 18px 40px rgba(0,0,0,.2);overflow:hidden;}
+.codepay-help-body{padding:26px 22px 18px;text-align:center;color:#24293d;}
+.codepay-help-title{font-size:24px;font-weight:800;line-height:1.18;color:#13172f;margin:0 0 18px;}
+.codepay-help-text{font-size:14px;line-height:1.34;color:#33384c;}
+.codepay-help-text p{margin:0 0 14px;}
+.codepay-help-ok{width:100%;border:0;border-top:1px solid #ececf2;background:#fff;color:#121733;font-size:24px;font-weight:700;padding:20px 12px;}
+.monthly-rules-sheet,.tickets-sheet{width:100%;max-width:410px;background:#fff;border-radius:34px 34px 0 0;align-self:flex-end;max-height:92%;display:flex;flex-direction:column;overflow:hidden;}
+.monthly-rules-handle,.tickets-sheet-handle{width:146px;height:7px;border-radius:999px;background:#dde1e8;margin:12px auto 26px;flex-shrink:0;}
+.monthly-rules-content{padding:0 22px 22px;overflow-y:auto;}
+.monthly-rules-title{font-size:18px;font-weight:800;color:#131730;text-align:center;line-height:1.25;margin:0 0 22px;}
+.monthly-rules-illustration{width:220px;height:220px;border-radius:50%;background:#f5f2e8;margin:0 auto 26px;position:relative;overflow:hidden;}
+.monthly-rules-illustration .pass-card{position:absolute;left:60px;top:50px;width:94px;height:120px;border-radius:10px;background:#ffcb0c;border:4px solid #efb700;box-shadow:0 8px 18px rgba(0,0,0,.08);}
+.monthly-rules-illustration .pass-card::before{content:'ONAY!';position:absolute;left:14px;top:8px;font-size:11px;font-weight:800;color:#091437;}
+.monthly-rules-illustration .pass-card::after{content:'1234567';position:absolute;left:14px;top:28px;font-size:17px;letter-spacing:2px;font-weight:800;color:#1d2038;}
+.monthly-rules-illustration .phone{position:absolute;left:78px;top:78px;width:72px;height:118px;border-radius:18px;background:#203344;border:4px solid #e6a900;transform:rotate(22deg);box-shadow:0 6px 14px rgba(0,0,0,.1);}
+.monthly-rules-illustration .phone::before{content:'';position:absolute;left:8px;right:8px;top:14px;bottom:14px;background:#fff;border-radius:12px;}
+.monthly-rules-illustration .phone::after{content:'✓';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:36px;height:24px;border-radius:8px;background:#fff;box-shadow:0 0 0 1px #e4e4ea inset;color:#33b655;display:flex;align-items:center;justify-content:center;font-weight:800;}
+.monthly-rules-illustration .validator{position:absolute;right:38px;top:82px;width:92px;height:138px;border-radius:30px 30px 22px 22px;background:#ffcb0c;box-shadow:0 8px 18px rgba(0,0,0,.08);transform:rotate(12deg);}
+.monthly-rules-illustration .validator::before{content:'';position:absolute;left:12px;right:12px;top:16px;bottom:16px;border-radius:18px;background:#243447;}
+.monthly-rules-illustration .validator::after{content:'';position:absolute;left:29px;top:35px;width:34px;height:43px;border-radius:6px;background:#fff;box-shadow:0 0 0 2px #e5e7ef inset;}
+.monthly-rules-qr{position:absolute;right:47px;top:130px;width:18px;height:18px;background:repeating-linear-gradient(90deg,#111 0 3px,#fff 3px 6px),repeating-linear-gradient(180deg,#111 0 3px,#fff 3px 6px);background-blend-mode:multiply;filter:contrast(2);}
+.monthly-rules-bullets{font-size:14px;line-height:1.35;color:#22273b;padding:0 4px;}
+.monthly-rules-bullets p{margin:0 0 22px;}
+.monthly-rules-close{margin:18px 0 4px;width:100%;height:70px;border:0;border-radius:999px;background:#ffdd00;color:#121733;font-size:20px;font-weight:700;flex-shrink:0;}
+.tickets-sheet-content{padding:0 20px 24px;overflow-y:auto;}
+.tickets-sheet-placeholder{height:240px;border-radius:22px;background:#f3f3f3;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);}
+.tickets-sheet-title{font-size:18px;font-weight:700;color:#171b34;margin:0 0 14px;}
+
+
+/* Мобильді дизайнның нақты өлшемдері және геолокация белгісін алып тастау */
+.service-page{background:#f5f5f5;}
+.service-header{height:68px;padding:10px 15px;background:#fff;gap:15px;}
+.service-title{font-size:clamp(19px,5vw,22px);font-weight:650;letter-spacing:-.3px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.service-back{flex:0 0 33px;width:33px;height:36px;font-size:21px;}
+.service-top-pill{display:none!important;}
+.service-help{flex:0 0 42px;margin-left:auto;width:42px;height:42px;border-radius:12px;font-size:22px;}
+.service-scroll{padding:22px 15px 28px;}
+.codepay-subtitle{font-size:13px;margin-bottom:23px;}
+.service-card-row{min-height:68px;padding:7px 0 8px!important;gap:10px;}
+.service-card-row div{font-size:16px!important;}
+.service-card-row .service-select-arrow{font-size:18px;margin-left:0;flex-shrink:0;display:flex;}
+.mini-virtual-icon{width:32px;height:30px;}
+.codepay-input-wrap{margin-top:20px;border-radius:12px;min-height:60px;padding:12px 13px;}
+.codepay-input-wrap label{font-size:12px;top:-10px;left:12px;}
+.codepay-input{font-size:20px;letter-spacing:1px;}
+.codepay-hint{font-size:12px;margin:16px 0 24px;}
+.onay-yellow-btn{height:55px;font-size:17px;}
+.onay-outline-btn{height:54px;font-size:15px;margin-top:12px;}
+.promo-ya{margin-top:54px;min-height:254px;padding:15px 12px 18px;}
+.promo-ya .small-top{font-size:13px;margin-bottom:8px;}
+.promo-ya .big{font-size:clamp(19px,5.4vw,24px);}
+.promo-ya .sub{font-size:14px;}
+.promo-ya .phone{height:135px;width:112px;margin:14px auto 4px;border-radius:18px;}
+.promo-ya .phone::before{border-radius:12px;inset:12px;}
+.promo-ya .phone::after{font-size:11px;}
+.promo-ya .fine{font-size:8px;}
+.empty-ticket-illustration{width:176px;height:176px;margin:6px auto 23px;}
+.tickets-empty-text{font-size:14px;margin-bottom:28px;}
+.promo-tournament{min-height:110px;padding:14px 12px;}
+.promo-tournament .text{font-size:clamp(16px,4vw,18px);}
+.promo-tournament .date{margin-top:10px;padding:7px 12px;font-size:14px;}
+.monthly-sheet{border-radius:28px 28px 0 0;padding-top:12px;}
+.monthly-handle{margin-bottom:18px;width:92px;height:6px;}
+.monthly-title{font-size:clamp(15px,4.1vw,17px);max-width:calc(100% - 62px);white-space:nowrap;}
+.monthly-topbar{padding-bottom:14px;}
+.monthly-help{font-size:20px;width:42px;height:42px;}
+.monthly-body{padding:0 16px 16px;}
+.monthly-location{height:58px;margin-bottom:17px;font-size:16px;}
+.monthly-card{padding:14px;border-radius:13px;margin-bottom:17px;}
+.monthly-card-title{font-size:16px;}
+.monthly-card-sub{font-size:13px;}
+.monthly-price{font-size:16px;}
+.monthly-info{font-size:13px;padding:14px;gap:12px;}
+.monthly-bottom{padding:12px 17px 18px;}
+.monthly-paybtn{height:55px;font-size:17px;}
+.monthly-meta{font-size:12px;}
+.monthly-meta strong{font-size:17px;}
+/* Әр popup ата-анасы үстіне шығады; еркін жабылады */
+.codepay-help-overlay,.monthly-rules-overlay,.tickets-sheet-overlay{z-index:240;}
+.codepay-help-card{max-width:min(360px,calc(100vw - 34px));border-radius:18px;}
+.codepay-help-body{padding:20px 16px 14px;}
+.codepay-help-title{font-size:clamp(17px,5vw,20px);margin-bottom:13px;}
+.codepay-help-text{font-size:clamp(12px,3.25vw,14px);line-height:1.38;}
+.codepay-help-text p{margin-bottom:10px;}
+.codepay-help-ok{font-size:20px;padding:16px 12px;}
+.monthly-rules-overlay,.tickets-sheet-overlay{padding:0;align-items:flex-end;}
+.monthly-rules-sheet,.tickets-sheet{width:100%;max-width:none;max-height:100%;border-radius:28px 28px 0 0;}
+.monthly-rules-sheet{height:100%;}
+.monthly-rules-content{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 16px 15px;}
+.monthly-rules-handle,.tickets-sheet-handle{margin:12px auto 24px;width:100px;height:6px;}
+.monthly-rules-title{font-size:17px;margin-bottom:17px;}
+.monthly-rules-illustration{width:200px;height:200px;flex-shrink:0;margin-bottom:20px;}
+.monthly-rules-bullets{font-size:12.5px;line-height:1.34;}
+.monthly-rules-bullets p{margin-bottom:16px;}
+.monthly-rules-close{margin-top:auto;height:56px;font-size:18px;}
+.tickets-sheet{height:22%;min-height:165px;}
+.tickets-sheet-content{padding:0 15px 16px;flex:1;}
+.tickets-sheet-placeholder{height:90px;border-radius:18px;background:#f2f2f2;}
+@media(max-width:360px){.service-header{gap:9px}.service-title{font-size:17px}.service-help{flex-basis:39px}.monthly-card-title{font-size:14px}.monthly-price{font-size:14px}}
+
+
+    /* ЖАСАНДЫ ANDROID СТАТУС БАРЫ ЖОҚ: ОСЫ БЕТТІҢ ІШІНДЕ УАҚЫТ / LTE / БАТАРЕЯ ЖОҚ */
+    :root { --status-height:0px; }
+    #page-my-tickets.service-page { inset:0; background:#f4f4f4; z-index:70; }
+    #page-my-tickets .service-header {height:54px; min-height:54px; padding:0 13px; gap:16px; background:#fff; border-bottom:1px solid #e3e3e5; }
+    #page-my-tickets .service-back{width:40px;height:48px;flex-shrink:0;border:0; border-radius:0; }
+    #page-my-tickets .service-title{color:#101010;font-size:20px; font-weight:600; letter-spacing:-.25px; }
+    #page-my-tickets .tickets-main-scroll { flex:1;min-height:0; overflow-y:auto; background:#f4f4f4; padding:26px 15px 175px; text-align:center; scrollbar-width:none; }
+    #page-my-tickets .tickets-main-scroll::-webkit-scrollbar{display:none;}
+    #page-my-tickets .ticket-exact-art { display:block; margin:0 auto 23px; width:min(32.5vw,140px); aspect-ratio:1; height:auto; object-fit:contain; }
+    #page-my-tickets .tickets-empty-text { margin:0 0 22px; padding:0 4px; font-size:clamp(11px,3.0vw,14px); font-weight:650; line-height:1.3; color:#a1a1a9; white-space:nowrap; }
+    #page-my-tickets .promo-tournament { width:100%; height:auto; padding:0; display:block; border:0; margin:0; min-height:0; border-radius:11px; background:transparent; box-shadow:none; overflow:hidden; cursor:pointer; }
+    #page-my-tickets .promo-tournament img { display:block; width:100%; height:auto; aspect-ratio:708 / 192; object-fit:fill; border-radius:11px; }
+    #page-my-tickets .tickets-bottom-peek { position:absolute;left:0;right:0;bottom:0;width:100%; z-index:5; height:clamp(145px,18.55dvh,190px); background:#fff; border:0; border-radius:27px 27px 0 0; padding:11px 15px 0; display:flex; flex-direction:column;align-items:center; cursor:pointer; }
+    #page-my-tickets .tickets-peek-handle {display:block;flex-shrink:0;background:#e0e3e9;width:86px;height:5px;border-radius:999px;margin-bottom:25px;}
+    #page-my-tickets .tickets-peek-placeholder {display:block;width:100%;flex:1;border-radius:19px 19px 0 0;background:linear-gradient(105deg,#f5f5f5 0%,#e6e6e6 100%);}
+    /* Ашылған парақтың артындағы өзіне тән жұмсақ сұр фон жоғалмайды. */
+    #tickets-sheet-overlay { z-index:195; }
+    #tickets-sheet-overlay .tickets-sheet { min-height:52%; }
+    #tickets-sheet-overlay .tickets-sheet-placeholder { height:250px; }
+    @media (max-width:350px) { #page-my-tickets .tickets-empty-text {font-size:10.5px;} }
+    @media (max-height:600px) { #page-my-tickets .tickets-main-scroll{padding-top:14px;} #page-my-tickets .ticket-exact-art{width:105px;} }
+
+
+/* Негізгі экранның өлшемдері эталон суретке сәйкестендірілді. */
+#onay-card-slider.onay-card-slider{margin:0;padding:0 8px 0 6px;overflow:hidden;}
+#onay-card-slider .onay-card-slide{flex:0 0 calc(100% - 11px);}
+#onay-card-slider .onay-main-card{height:128px;min-height:128px;padding:14px 16px 12px;border-radius:12px;}
+#onay-card-slider .onay-card-watermark{width:210px;height:128px;}
+
+#my-cards-panel .onay-quick-grid{margin-top:7px;}
+/* Абонемент панеліндегі өлшемдер эталонға жақындатылды. */
+#page-monthly-pass .monthly-sheet{min-height:100%;border-radius:31px 31px 0 0;}
+#page-monthly-pass .monthly-handle{border:0;outline:0;appearance:none;-webkit-appearance:none;padding:0;box-shadow:none;background:#dfe3eb;margin-bottom:40px;}
+#page-monthly-pass .monthly-topbar{padding-bottom:18px;}
+#page-monthly-pass .monthly-title{font-size:15px;max-width:78%;}
+#page-monthly-pass .monthly-location{height:54px;margin-bottom:11px;font-size:14px;}
+#page-monthly-pass .monthly-card{position:relative;display:block;min-height:66px;padding:14px 13px 12px;margin-bottom:22px;}
+#page-monthly-pass .monthly-card-title{font-size:12.7px;white-space:nowrap;line-height:1.2;max-width:calc(100% - 61px);}
+#page-monthly-pass .monthly-card-sub{font-size:11.5px;white-space:nowrap;line-height:1.3;margin-top:8px;}
+#page-monthly-pass .monthly-price{position:absolute;right:13px;top:16px;font-size:13px;padding:0;}
+#page-monthly-pass .monthly-info{min-height:68px;font-size:9.5px;line-height:1.4;padding:15px;gap:16px;}
+#page-monthly-pass .monthly-paybtn{height:50px;font-size:14px;}
+#page-monthly-pass .monthly-bottom{padding:12px 16px 22px;}
+#page-monthly-pass .monthly-meta{font-size:11px;}
+#page-monthly-pass .monthly-meta strong{font-size:14px;}
+
+/* Карта бетіндегі төменгі ақ панель: берілген 3 фотоға сәйкес. */
+#cards-peek-sheet.cards-peek-sheet{
+  box-sizing:border-box;position:absolute;bottom:65px;left:0;right:0;
+  z-index:24;width:100%;height:101px;
+  min-height:0;padding:0;background:#fff;border-radius:31px 31px 0 0;
+  display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;
+  box-shadow:0 -1px 1px rgba(10,12,22,.045);transition:height .3s ease, border-radius .3s ease;
+}
+#cards-peek-sheet.cards-peek-sheet.expanded{
+  top:var(--cards-header-height,56px);bottom:65px;height:auto;border-radius:31px 31px 0 0;
+}
+#cards-peek-sheet .cards-feed-pull{
+  height:42px;min-height:42px;flex:0 0 42px;width:100%;
+  display:flex;justify-content:center;align-items:flex-start;padding:11px 0 0;
+  border:0;background:white;cursor:pointer;touch-action:none;
+}
+#cards-peek-sheet .cards-peek-grabber{width:84px;height:5px;border-radius:50px;background:#e1e5ec;margin:0;display:block;}
+#cards-peek-sheet .cards-feed-scroll{
+  box-sizing:border-box;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  padding:0 15px 14px;background:#fff;
+}
+#cards-peek-sheet:not(.expanded) .cards-feed-scroll{overflow:hidden;pointer-events:none;}
+#cards-peek-sheet .cards-feed-scroll::-webkit-scrollbar{display:none;}
+#cards-peek-sheet .onay-feed-item{margin:0 0 9px;width:100%;border-radius:15px;overflow:hidden;line-height:0;background:#fff;}
+#cards-peek-sheet .onay-feed-item img{display:block;width:100%;height:auto;aspect-ratio:655 / 329;object-fit:fill;border-radius:15px;}
+#page-main.show-other #cards-peek-sheet{display:none;}
+@media(max-height:600px){#cards-peek-sheet.cards-peek-sheet{height:76px}#cards-peek-sheet.cards-peek-sheet.expanded{height:auto}}
+
+/* Айлық абонемент: жоғарғы тұтқаны басып төмен тартқанда жабу. */
+#page-monthly-pass .monthly-handle{
+  cursor:grab;width:96px;height:6px;margin:0 auto 32px;
+  background:#dfe3eb;touch-action:none;position:relative;z-index:3;
+}
+#page-monthly-pass .monthly-handle::before{
+  content:'';position:absolute;left:-100px;right:-100px;top:-12px;bottom:-12px;
+}
+#page-monthly-pass .monthly-topbar{touch-action:pan-x;}
+#page-monthly-pass .monthly-sheet.dragging{transition:none!important;}
+#page-monthly-pass .monthly-sheet.drag-return{transition:transform .23s ease!important;}
+#page-monthly-pass .monthly-overlay{overscroll-behavior:contain;}
+
+/* Жарнама парағы ашық тұрғанда жабу тұтқасы барлық жағдайда басылады. */
+#cards-peek-sheet .cards-feed-pull{position:relative;z-index:3;-webkit-user-select:none;user-select:none;}
+#cards-peek-sheet.expanded .cards-feed-pull{height:52px;flex-basis:52px;min-height:52px;}
+#cards-peek-sheet .cards-feed-scroll{touch-action:pan-y;}
+#cards-peek-sheet.expanded{overscroll-behavior:contain;}
+
+
+    /* ===== TOP UP / AUTO TOP UP exact-style rebuild ===== */
+    .topup-page { background:#f8f8f8; }
+    .topup-header {
+      height:67px; min-height:67px; background:#fff; border-bottom:1px solid #eceef2;
+      display:flex; align-items:center; gap:18px; padding:0 20px;
+      position:sticky; top:0; z-index:15;
+    }
+    .topup-back-btn {
+      width:28px; height:28px; border:0; background:transparent; color:#111827;
+      display:flex; align-items:center; justify-content:center; font-size:24px;
+    }
+    .topup-header-title { font-size:18px; font-weight:800; color:#111827; letter-spacing:-0.01em; }
+    .topup-body { padding:18px 0 28px; }
+    .topup-subtitle {
+      text-align:center; color:#333d52; font-size:13px; font-weight:500; line-height:1.45;
+      margin-bottom:14px;
+    }
+    .topup-card-deck {
+      display:flex; gap:14px; overflow-x:auto; padding:0 10px 8px 10px; scroll-snap-type:x mandatory;
+    }
+    .topup-card-deck::-webkit-scrollbar{display:none;}
+    .topup-card-deck{scrollbar-width:none;-ms-overflow-style:none;}
+    .topup-card {
+      position:relative; flex:0 0 calc(100% - 56px); min-height:160px; border-radius:18px; overflow:hidden;
+      box-shadow:0 3px 12px rgba(19,25,45,.12); scroll-snap-align:start; padding:26px 26px 22px;
+    }
+    .topup-card::before{
+      content:''; position:absolute; right:-18px; top:-10px; width:235px; height:235px;
+      border-radius:50%; background:rgba(255,255,255,.12);
+    }
+    .topup-card::after{
+      content:''; position:absolute; right:44px; top:44px; width:145px; height:145px;
+      background:rgba(255,255,255,.10); clip-path:polygon(50% 0%, 100% 50%, 72% 50%, 72% 100%, 28% 100%, 28% 50%, 0% 50%);
+      transform:rotate(180deg); border-radius:22px;
+    }
+    .topup-card-blue{ background:#85cef8; }
+    .topup-card-purple{ background:#d6b5f8; }
+    .topup-card-content{ position:relative; z-index:1; min-height:112px; display:flex; justify-content:space-between; align-items:flex-start; }
+    .topup-card-title{ font-size:20px; font-weight:500; color:#0e1730; line-height:1; }
+    .topup-chip{
+      display:inline-flex; align-items:center; justify-content:center; min-width:103px; height:43px;
+      margin-top:24px; padding:0 22px; border-radius:22px; font-size:14px; font-weight:700; color:#fff;
+      background:#1765e8; box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
+    }
+    .topup-chip-purple{ background:#7427b9; }
+    .topup-balance{ font-size:32px; font-weight:900; color:#0a1437; letter-spacing:-0.03em; line-height:1; margin-top:2px; }
+    .topup-balance small{ font-size:1em; font-weight:900; }
+    .topup-tabs{
+      display:flex; align-items:flex-end; margin-top:8px; background:#fff; border-bottom:1px solid #dfe2e7;
+    }
+    .topup-tab{
+      position:relative; flex:1; text-align:center; padding:18px 10px 15px; background:transparent; border:0;
+      font-size:14px; font-weight:800; color:#7b7f89;
+    }
+    .topup-tab.active{ color:#1f2937; }
+    .topup-tab.active::after{ content:''; position:absolute; left:0; right:0; bottom:-1px; height:3px; background:#edc71d; }
+    .topup-panel{ padding:16px 27px 28px; }
+    .topup-section-title{
+      color:#0f1733; font-size:19px; font-weight:800; line-height:1.2; margin-bottom:18px;
+    }
+    .topup-input-box{
+      width:100%; height:84px; border:2px solid #e4e6ec; border-radius:15px; background:#fff;
+      padding:0 28px; font-size:22px; color:#111827; outline:none;
+    }
+    .topup-input-box::placeholder{ color:#a4a8b2; font-size:20px; font-weight:500; }
+    .topup-amount-pills{ display:flex; gap:11px; overflow-x:auto; padding:16px 0 0; }
+    .topup-amount-pills::-webkit-scrollbar{display:none;}
+    .topup-amount-pill{
+      flex:0 0 auto; min-width:122px; height:60px; border-radius:30px; border:2px solid #dfe2e8; background:#fff;
+      color:#454a57; font-size:20px; font-weight:500;
+    }
+    .topup-hint{ margin-top:18px; color:#9fa4ae; font-size:14px; line-height:1.55; font-weight:500; }
+    .topup-block-title{ margin-top:46px; margin-bottom:16px; color:#0f1733; font-size:19px; font-weight:800; }
+    .topup-pay-row{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:4px 0 0; min-height:56px;
+    }
+    .topup-pay-main{ display:flex; align-items:center; gap:18px; min-width:0; }
+    .onay-bank-icon {
+      width:48px; height:32px; border-radius:5px; background:#8e98f7; position:relative; overflow:hidden;
+      flex:0 0 auto; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+    }
+    .onay-bank-icon::before{ content:''; position:absolute; left:7px; top:7px; width:12px; height:8px; border-radius:2px; background:#f3d166; }
+    .onay-bank-icon::after{ content:''; position:absolute; left:7px; right:7px; bottom:8px; height:3px; border-radius:2px; background:rgba(255,255,255,.85); }
+    .topup-pay-name{ color:#1c2335; font-size:19px; font-weight:500; line-height:1.15; }
+    .topup-pay-sub{ color:#8d94a1; font-size:14px; font-weight:500; line-height:1.2; margin-top:4px; }
+    .topup-chevron{ color:#20293d; font-size:24px; padding-right:4px; }
+    .topup-main-button{
+      margin-top:38px; width:100%; height:81px; border:0; border-radius:42px;
+      background:#ffdd00; color:#111827; font-size:22px; font-weight:700; box-shadow:none;
+    }
+    .topup-legal{ margin:26px 0 0; color:#a7acb6; font-size:14px; line-height:1.45; text-align:center; font-weight:500; }
+    .topup-legal .link{ color:#f0ba1c; }
+    .topup-secure{ margin-top:22px; display:flex; align-items:center; justify-content:center; gap:7px; color:#8f949d; font-size:13px; font-weight:500; }
+    .topup-secure .lock{ color:#39b54a; font-size:17px; }
+    .topup-secure .https{ color:#43b84e; }
+    .topup-logos{ margin-top:18px; display:flex; align-items:center; justify-content:center; gap:18px; }
+    .pay-logo{ height:24px; display:inline-flex; align-items:center; justify-content:center; }
+    .pay-logo.visa{ font-weight:900; font-size:18px; color:#2046a5; padding:0 6px; border-bottom:3px solid #f1b52b; }
+    .pay-logo.visa.electron{ position:relative; padding-bottom:0; }
+    .pay-logo.visa.electron::after{ content:'ELECTRON'; font-size:8px; font-weight:800; margin-left:4px; color:#1d4ed8; }
+    .pay-logo.mc{ gap:0; }
+    .pay-logo.mc i{ font-size:22px; }
+    .pay-logo.maestro{ gap:0; }
+    .pay-logo.maestro .c1{ width:22px; height:22px; border-radius:50%; background:#e3202a; margin-right:-7px; opacity:.92; }
+    .pay-logo.maestro .c2{ width:22px; height:22px; border-radius:50%; background:#1c79ff; }
+
+    .autotopup-row{ display:flex; align-items:center; justify-content:space-between; gap:18px; margin-top:6px; }
+    .autotopup-toggle{
+      width:69px; height:35px; border-radius:999px; border:0; background:#d6d7dd; position:relative; flex:0 0 auto;
+      transition:background .18s ease;
+    }
+    .autotopup-toggle::after{
+      content:''; position:absolute; top:4px; left:4px; width:27px; height:27px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.14);
+      transition:left .18s ease;
+    }
+    .autotopup-toggle.on{ background:#ffcf0f; }
+    .autotopup-toggle.on::after{ left:38px; }
+    .autotopup-help{ margin-top:26px; color:#a1a7b0; font-size:14px; line-height:1.34; font-weight:500; max-width:95%; }
+    .autotopup-form{ margin-top:38px; }
+    .autotopup-label{ color:#0f1733; font-size:19px; font-weight:800; line-height:1.2; margin-bottom:15px; }
+    .autotopup-field-wrap{ position:relative; }
+    .autotopup-field-wrap .currency{ position:absolute; right:20px; top:50%; transform:translateY(-50%); color:#9aa0aa; font-size:20px; font-weight:500; }
+    .autotopup-field-wrap .topup-input-box{ padding-right:48px; height:77px; font-size:20px; }
+    .autotopup-field-wrap .topup-input-box::placeholder{ font-size:19px; }
+    .autotopup-field-hint{ margin-top:12px; color:#b0b4bd; font-size:14px; font-weight:500; }
+    .autotopup-divider-space{ height:34px; }
+    .topup-screen-white{ background:#fff; }
+    .topup-card-section-white{ background:#fff; }
+    @media (max-width:390px){
+      .topup-card{ min-height:152px; padding:24px 24px 20px; }
+      .topup-balance{ font-size:30px; }
+      .topup-input-box{ height:78px; font-size:20px; }
+      .topup-amount-pill{ min-width:104px; height:56px; font-size:18px; }
+      .topup-main-button{ height:76px; font-size:21px; }
+      .topup-panel{ padding-left:20px; padding-right:20px; }
+    }
+
+  
+    #page-topup .topup-pay-row{background:transparent;border:0;cursor:pointer;text-align:left;}
+    /* v6: Пайдаланушы сұрағандай толықтыру бетінің масштабын қалыпқа келтіру.
+       360–410dp телефон экранында эталон скриншот пропорциялары. */
+    #page-topup { background:#fff; }
+    #page-topup .topup-header {height:55px; min-height:55px; padding:0 18px; gap:17px; }
+    #page-topup .topup-back-btn {width:23px;height:30px;font-size:19px;}
+    #page-topup .topup-header-title {font-size:17px;}
+    #page-topup .topup-body {padding:22px 0 16px;}
+    #page-topup .topup-subtitle {font-size:12.5px;margin:0 10px 12px;}
+    #page-topup .topup-card-deck {gap:11px; padding:0 6px 7px;}
+    #page-topup .topup-card {flex-basis:calc(100% - 28px);min-height:123px;padding:19px 17px 14px;border-radius:12px;box-shadow:0 2px 5px #1720381a;}
+    #page-topup .topup-card::before {width:168px;height:168px;top:-10px;right:-13px;}
+    #page-topup .topup-card::after {width:106px;height:106px;top:30px;right:23px;}
+    #page-topup .topup-card-content {min-height:85px;}
+    #page-topup .topup-card-title {font-size:15px;}
+    #page-topup .topup-chip {height:25px;min-width:75px;margin-top:12px;padding:0 14px;border-radius:14px;font-size:12px;}
+    #page-topup .topup-balance {font-size:27px;}
+    #page-topup .topup-tabs {margin-top:4px;}
+    #page-topup .topup-tab {padding:14px 8px 13px;font-size:14px;font-weight:700;}
+    #page-topup .topup-tab.active::after {height:2px;}
+    #page-topup .topup-panel {padding:22px 15px 22px;}
+    #page-topup .topup-section-title {font-size:16px;margin-bottom:18px;}
+    #page-topup .topup-input-box {height:49px;border-width:1.2px;border-radius:8px;padding:0 15px;font-size:16px;}
+    #page-topup .topup-input-box::placeholder {font-size:16px;}
+    #page-topup .topup-amount-pills {gap:5px;padding-top:14px;padding-bottom:2px;}
+    #page-topup .topup-amount-pill {min-width:71px;height:35px;font-size:14px;border-width:1px;border-radius:25px;}
+    #page-topup .topup-hint {font-size:12px;margin-top:14px;line-height:1.65;}
+    #page-topup .topup-block-title {font-size:16px;margin-top:26px;margin-bottom:16px;}
+    #page-topup .topup-pay-row {min-height:53px;gap:10px;padding-top:0;}
+    #page-topup .topup-pay-main {gap:13px;}
+    #page-topup .onay-bank-icon {width:27px;height:18px;border-radius:2px;}
+    #page-topup .onay-bank-icon::before {left:4px;top:4px;width:7px;height:5px;}
+    #page-topup .onay-bank-icon::after {left:4px;right:4px;bottom:4px;height:2px;}
+    #page-topup .topup-pay-name {font-size:15px;}
+    #page-topup .topup-pay-sub {font-size:11.5px;margin-top:3px;}
+    #page-topup .topup-chevron {font-size:18px;padding-right:3px;}
+    #page-topup .topup-main-button {height:47px;font-size:16px;margin-top:35px;border-radius:30px;}
+    #page-topup .topup-legal {font-size:10px;line-height:1.45;margin-top:19px;}
+    #page-topup .topup-secure {margin-top:17px;font-size:10px;gap:5px;}
+    #page-topup .topup-secure .lock {font-size:11px;}
+    #page-topup .topup-logos {margin-top:11px;gap:8px;}
+    #page-topup .pay-logo {height:18px;}
+    #page-topup .pay-logo.visa {font-size:13px;padding:0 3px;border-bottom-width:2px;}
+    #page-topup .pay-logo.visa.electron::after {font-size:6px;margin-left:2px;}
+    #page-topup .pay-logo.mc i {font-size:18px;}
+    #page-topup .pay-logo.maestro .c1,#page-topup .pay-logo.maestro .c2 {width:17px;height:17px;}
+    #page-topup .autotopup-row {gap:12px;margin-top:4px;}
+    #page-topup .autotopup-toggle {width:38px;height:21px;}
+    #page-topup .autotopup-toggle::after {width:15px;height:15px;top:3px;left:3px;}
+    #page-topup .autotopup-toggle.on::after {left:20px;}
+    #page-topup .autotopup-help {font-size:12px;line-height:1.35;margin-top:32px;max-width:100%;}
+    #page-topup .autotopup-form {margin-top:30px;}
+    #page-topup .autotopup-label {font-size:16px;margin-bottom:12px;}
+    #page-topup .autotopup-field-wrap .topup-input-box {height:49px;font-size:16px;padding-right:30px;}
+    #page-topup .autotopup-field-wrap .topup-input-box::placeholder {font-size:16px;}
+    #page-topup .autotopup-field-wrap .currency {font-size:14px;right:14px;}
+    #page-topup .autotopup-field-hint {font-size:12px;margin-top:10px;}
+    #page-topup .autotopup-divider-space {height:27px;}
+    #page-topup #topup-auto-panel .topup-block-title {margin-top:32px;}
+    #page-topup #topup-auto-panel .topup-main-button {margin-top:34px;}
+    /* Small screens: keep compact, never accidentally restore v5 large sizes. */
+    @media (max-width:360px) {
+      #page-topup .topup-panel{padding-left:13px;padding-right:13px;}
+      #page-topup .topup-subtitle{font-size:11.5px;}
+      #page-topup .topup-card{min-height:114px;}
+      #page-topup .topup-amount-pill{min-width:66px;font-size:13px;}
+      #page-topup .topup-amount-pills{gap:5px;}
+    }
+
+/* V8: төменгі навигацияны суреттегі қалыпты өлшемдерге қайтару */
+#page-main .onay-bottom-bar{
+  height:68px!important;min-height:68px!important;
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:center!important;
+  padding:4px 7px max(5px,env(safe-area-inset-bottom))!important;
+  border-radius:22px 22px 0 0!important;
+  background:#fff!important;
+  box-shadow:0 -3px 17px rgba(9,15,40,.055)!important;
+}
+#page-main .onay-bottom-action{
+  height:56px!important;min-height:56px!important;
+  padding:0!important;gap:3px!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  color:#0b1536!important;font-size:10px!important;font-weight:500!important;
+}
+#page-main .onay-bottom-action > svg {width:25px!important;height:25px!important;}
+#page-main .onay-bottom-action span:last-child{
+  font-size:10.5px!important;line-height:1.2!important;
+}
+#page-main .onay-nav-card-icon{
+  width:28px!important;height:28px!important;border-radius:50%!important;
+  background:#ffdc00!important;
+}
+#page-main .onay-nav-card-icon svg{width:22px!important;height:22px!important;}
+#page-main .onay-heart{width:27px!important;height:27px!important;color:#22d345!important;}
+#page-main .onay-menu-avatar{width:29px!important;height:29px!important;}
+#page-main .onay-menu-avatar svg{width:29px!important;height:29px!important;}
+#page-main .onay-menu-dot{width:7px!important;height:7px!important;top:0!important;right:0!important;}
+#page-main .onay-nav-qr-holder{height:68px!important;pointer-events:none!important;}
+#page-main .onay-nav-qr{
+  top:-27px!important;width:59px!important;height:59px!important;
+  background:radial-gradient(circle at 29% 21%, #ffef6e, #ffdf09 49%, #ffb818 100%)!important;
+  box-shadow:0 8px 18px rgba(249,195,5,.32)!important;
+  pointer-events:auto!important;
+}
+#page-main .onay-nav-qr svg{width:30px!important;height:30px!important;}
+/* peek-панелі мәзірмен жабылмасын */
+#page-main .cards-peek-sheet{bottom:68px!important;}
+#my-cards-panel{padding-bottom:161px!important;}
+
+/* V8: Бағыттар беті — 16:27 суретіне сәйкес тор, қойындылар, таңдаулылар */
+#page-routes{background:#f3f4fa!important;}
+#page-routes .route-citybar{
+  height:48px!important;padding:0 13px!important;gap:9px!important;
+}
+#page-routes .route-location-btn{
+  height:45px!important;gap:15px!important;font-size:13px!important;
+  justify-content:space-around!important;
+}
+#page-routes .route-place-icon{width:20px!important;}
+#page-routes .route-place-icon svg{width:21px!important;height:21px!important;}
+#page-routes .route-city-actions{gap:9px!important;}
+#page-routes .route-menu-btn{height:41px!important;min-width:105px!important;
+  border-radius:12px!important;font-size:13px!important;gap:14px!important;}
+#page-routes .route-reload{height:41px!important;width:42px!important;border-radius:12px!important;}
+#page-routes .route-menu-btn svg{width:21px!important;height:21px!important;}
+#page-routes .route-reload svg{width:23px!important;height:23px!important;}
+#page-routes .route-main-tabs{height:44px!important;}
+#page-routes .route-main-tab{font-size:13px!important;}
+#page-routes .route-main-tab.active:after{height:2px!important;}
+#page-routes .route-search-box{
+  height:41px!important;margin:13px 15px 12px!important;
+  border:1px solid #dfe1e7!important;border-radius:7px!important;
+  padding:0 19px!important;
+}
+#page-routes .route-search-box input{font-size:13px!important;}
+#page-routes .route-category-list{
+  height:44px!important;grid-template-columns:1fr 1.23fr .82fr!important;
+}
+#page-routes .route-category{
+  gap:9px!important;font-size:11.5px!important;padding:0 3px!important;
+  color:#85858a!important;
+}
+#page-routes .route-category.active{color:#161922!important;}
+#page-routes .route-category svg{width:17px!important;height:17px!important;}
+#page-routes .route-category.active svg{color:#f5ab0b!important;stroke:#f5ab0b!important;}
+#page-routes .route-category:not(.active) svg{color:#0d1637!important;stroke:#0d1637!important;}
+#page-routes .route-catalog-scroll{
+  padding:23px 22px 115px!important;background:#f3f4fa!important;
+}
+#page-routes .route-number-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:11px 19px!important;
+}
+#page-routes .route-tile{
+  height:61px!important;min-width:0!important;
+  background:#fff!important;border-radius:7px!important;
+  color:#111634!important;font-size:15px!important;font-weight:700!important;
+}
+#page-routes .route-tile:active{background:#fff0af!important;}
+#page-routes .route-favorites{
+  bottom:18px!important;padding:27px 15px 9px!important;
+}
+#page-routes .route-fav-chip{
+  height:33px!important;border-radius:12px!important;
+  gap:8px!important;font-size:12px!important;padding:0 14px!important;
+}
+#page-routes .route-fav-chip.bookmark{width:38px!important;padding:0!important;}
+#page-routes .route-fav-chip svg{width:18px!important;height:18px!important;}
+#page-routes .route-bottom-nav{
+  height:69px!important;min-height:69px!important;
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:center!important;justify-content:space-around!important;
+  border-radius:22px 22px 0 0!important;
+  padding:4px 7px max(5px,env(safe-area-inset-bottom))!important;
+}
+#page-routes .route-bottom-button{
+  width:100%!important;min-width:0!important;height:57px!important;
+  display:flex!important;justify-content:center!important;align-items:center!important;
+  gap:3px!important;font-size:10.5px!important;color:#0b1536!important;
+}
+#page-routes .route-bottom-button svg{width:24px!important;height:24px!important;}
+#page-routes .route-bottom-button .route-selected-icon{
+  width:27px!important;height:27px!important;border-radius:50%!important;
+  background:#ffda00!important;
+}
+#page-routes .route-bottom-button .route-selected-icon svg{width:20px!important;height:20px!important;}
+#page-routes .route-qr-holder{height:69px!important;width:100%!important;pointer-events:none!important;}
+#page-routes .route-qr-button{
+  top:-27px!important;bottom:auto!important;
+  left:50%!important;transform:translateX(-50%)!important;
+  width:59px!important;height:59px!important;
+  border-radius:50%!important;pointer-events:auto!important;
+  background:radial-gradient(circle at 29% 21%, #ffef6e, #ffdf09 49%, #ffb818 100%)!important;
+  box-shadow:0 8px 18px rgba(249,195,5,.32)!important;
+  font-size:0!important;
+}
+#page-routes .route-qr-button svg{width:30px!important;height:30px!important;}
+/* Үлкейген панельді шағын экранда да үлкейтпейміз */
+@media(max-width:350px){
+  #page-routes .route-citybar{padding-left:9px!important;padding-right:9px!important;gap:6px!important;}
+  #page-routes .route-menu-btn{min-width:95px!important;gap:8px!important;}
+  #page-routes .route-reload{width:38px!important;}
+  #page-routes .route-catalog-scroll{padding:18px 13px 115px!important;}
+  #page-routes .route-number-grid{gap:9px 12px!important;}
+  #page-routes .route-category{font-size:10px!important;gap:5px!important;}
+  #page-main .onay-nav-qr,#page-routes .route-qr-button{width:55px!important;height:55px!important;}
+}
+
+
+/* Тізім батырмасы — екі баған мен ықшам қатарларды қайтарады */
+#page-routes .route-number-grid.list-view {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;}
+#page-routes .route-number-grid.list-view .route-tile{height:48px!important;justify-content:flex-start!important;padding-left:20px!important;}

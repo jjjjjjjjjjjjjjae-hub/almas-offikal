@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>ONAY! — Карталар</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-slate-900 flex justify-center items-center min-h-screen p-0 sm:p-4">
+  <div id="onay-app-root" class="w-full max-w-[410px] bg-[#f8f9fa] h-[100dvh] sm:h-[844px] sm:rounded-[40px] shadow-2xl relative flex flex-col overflow-hidden border-0 sm:border-8 sm:border-slate-800">
+    <!-- MAIN: жүйелік уақыт/интернет/батареяны қайталайтын жасанды жолақ алынып тасталды -->
+    <div id="page-main" class="flex-1 flex flex-col overflow-hidden relative">
+      <!-- Екі таб: бірін басқанда екіншісінің мазмұнына өтеді -->
+      <nav id="cards-top-nav" aria-label="Карталар қойындылары" role="tablist">
+        <button id="tab-my-cards" type="button" role="tab" aria-selected="true" aria-controls="my-cards-panel" class="cards-tab active" onclick="setCardsTab('my')">Карталарым</button>
+        <button id="tab-other-cards" type="button" role="tab" aria-selected="false" aria-controls="other-cards-panel" class="cards-tab" onclick="setCardsTab('other')">Басқа карталар</button>
+        <button type="button" class="cards-bell" aria-label="Хабарландырулар" onclick="openNotifications()"><i class="fa-solid fa-bell"></i></button>
+      </nav>
+      <div id="my-cards-panel" role="tabpanel" aria-labelledby="tab-my-cards" class="flex-1 overflow-y-auto no-scrollbar">
+        <div class="onay-card-slider" id="onay-card-slider">
+          <div class="onay-card-track" id="onay-card-track"></div>
+        </div>
+        <span id="main-balance-text" hidden>80</span>
+        <div class="onay-dots" id="onay-card-dots" aria-label="Карталар слайдері"></div>
+        <div class="onay-quick-grid">
+          <button type="button" onclick="openTopUpPage()" class="onay-action"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Толықтыру</span></button>
+          <button type="button" onclick="openTransferPage()" class="onay-action onay-action-muted"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 20v-7m0 0-2 2m2-2 2 2m9 6v-7m0 0-2 2m2-2 2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Аудару</span></button>
+          <button type="button" onclick="showToast('Төлемдер тарихы')" class="onay-action"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" stroke="currentColor" stroke-width="1.65"/><path d="M8 3v3M16 3v3M8 10h8M8 14h3M13 14h3M8 18h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round"/></svg><span>Тарих</span></button>
+        </div>
+        <div class="onay-promo-section">
+          <div class="onay-promo-slider" id="onay-promo-slider">
+            <div class="onay-promo-track" id="onay-promo-track"></div>
+          </div>
+        </div>
+        <div class="onay-services">
+          <button type="button" onclick="openCodePayPage()" class="onay-service"><img src="assets/code-payment.webp" alt="" aria-hidden="true" /><span>Код бойынша<br/>төлеу</span></button>
+          <button type="button" onclick="openMyTicketsPage()" class="onay-service"><img src="assets/my-tickets.webp" alt="" aria-hidden="true" /><span>Менің<br/>билеттерім</span></button>
+          <button type="button" onclick="openQrPage('create')" class="onay-service"><img src="assets/metro-payment.webp" alt="" aria-hidden="true" /><span>Метроға ақы<br/>төлеу</span></button>
+          <button type="button" onclick="openMonthlyPassPage()" class="onay-service"><img src="assets/monthly-pass.webp" alt="" aria-hidden="true" /><span>Айлық жол жүру</span></button>
+        </div>
+      </div>
+      <!-- БАСҚА КАРТАЛАР: берілген скриншоттың орналасуы -->
+      <section id="other-cards-panel" role="tabpanel" aria-labelledby="tab-other-cards" hidden>
+        <!-- Скриншоттан тек иллюстрация бөлігі алынған, қалғаны HTML/CSS. -->
+        <img class="other-cards-art" src="assets/other-cards.webp" alt="Бір-біріне беріліп жатқан екі ONAY! картасының иллюстрациясы" />
+        <p class="other-cards-caption">Жақын адамдарыңыздың карталарын қосып,<br class="hidden min-[365px]:block" /> балансын толтырып бақылау үшін</p>
+        <button type="button" class="other-cards-add" onclick="openOtherCardModal('add')"><i class="fa-regular fa-clone" aria-hidden="true"></i><span>Картаны қосу</span></button>
+        <button type="button" class="other-cards-help" onclick="openOtherCardModal('help')"><i class="fa-regular fa-circle-question" aria-hidden="true"></i><span>Қалай жұмыс істейді?</span></button>
+      </section>
+      <section id="cards-peek-sheet" class="cards-peek-sheet" aria-label="ONAY! жаңалықтары мен жарнамалары">
+        <button type="button" class="cards-feed-pull" id="cards-feed-pull" aria-label="Барлық хабарландырулар мен жарнамаларды ашу немесе жабу" aria-expanded="false" onclick="if(!this.dataset.swiped)toggleMainFeed()">
+          <span class="cards-peek-grabber"></span>
+        </button>
+        <div id="cards-feed-scroll" class="cards-feed-scroll" aria-label="Жарнамалар тізімі">
+          <div class="onay-feed-item"><img loading="eager" draggable="false" src="assets/feed-trip.jpeg" alt="Сапарыңыз қалай өтті?"></div>
+          <div class="onay-feed-item"><img loading="lazy" draggable="false" src="assets/feed-music.jpeg" alt="Яндекс Музыка"></div>
+          <div class="onay-feed-item"><img loading="lazy" draggable="false" src="assets/feed-tiktok.jpeg" alt="ONAY! TikTok"></div>
+          <div class="onay-feed-item"><img loading="lazy" draggable="false" src="assets/feed-instagram.jpeg" alt="ONAY! Instagram"></div>
+        </div>
+      </section>
+      <div class="cards-bottom onay-bottom-bar absolute bottom-0 left-0 right-0 z-30">
+        <button type="button" onclick="openRoutesPage()" class="onay-bottom-action" aria-label="Бағыттар"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 25V10c0-5 3-7.5 9-7.5s9 2.5 9 7.5v15c0 2.3-1.5 3.8-4 3.8H11c-2.5 0-4-1.5-4-3.8Z" fill="#0d1534"/><rect x="10" y="8" width="12" height="10" rx="3.2" fill="white"/><path d="M10 22h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="11" cy="24.4" r="1.5" fill="white"/><circle cx="21" cy="24.4" r="1.5" fill="white"/><path d="M11 29.3v1.5M21 29.3v1.5" stroke="#0d1534" stroke-width="3" stroke-linecap="round"/></svg><span>Бағыттар</span></button>
+        <button type="button" onclick="setCardsTab('my')" class="onay-bottom-action" aria-label="Карталар"><span class="onay-nav-card-icon"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="8" y="11" width="16" height="21" rx="2" transform="rotate(-20 8 11)" fill="#0d1334"/><path d="m17 7 9 3-2 6m-2 0 3 6" stroke="#0d1334" stroke-width="3" stroke-linecap="round"/><path d="m15 15 8 10" stroke="white" stroke-width="2"/></svg></span><span>Карталар</span></button>
+        <div class="onay-nav-qr-holder"><button type="button" onclick="openQrPage('scan')" class="qr-emblem onay-nav-qr" aria-label="QR пайдалану"><svg viewBox="0 0 40 40" fill="currentColor" aria-hidden="true"><path d="M4 4h12v12H4zm4 4v4h4V8zm16-4h12v12H24zm4 4v4h4V8zM4 24h12v12H4zm4 4v4h4v-4zm12-8h4v4h-4zm4 4h4v4h-4zm8-4h4v8h-4zm-12 8h4v4h-4zm4 4h8v4h-8zm8-4h4v8h-4z"/></svg></button></div>
+        <button type="button" onclick="showToast('Life бөлімі')" class="onay-bottom-action" aria-label="Life"><svg class="onay-heart" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 28S3 20 3 11.4C3 7 6.3 4 10.4 4c2.4 0 4.3 1.2 5.6 3.3C17.3 5.2 19.3 4 21.6 4 25.8 4 29 7 29 11.4 29 20 16 28 16 28Z"/></svg><span>Life</span></button>
+        <button type="button" onclick="showToast('Мәзір')" class="onay-bottom-action" aria-label="Мәзір"><span class="onay-menu-avatar"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#0c1435"/><circle cx="16" cy="12" r="5" fill="#fff"/><path d="M7 26c1-5 5-7 9-7s8 2 9 7" fill="white"/></svg><i class="onay-menu-dot"></i></span><span>Мәзір</span></button>
+      </div>
+          </div>
+
+
+    <!-- БАҒЫТТАР: Алматы автобустарының интернеттен жиналған анықтамалық тізімі -->
+    <section id="page-routes" class="hidden" role="region" aria-label="Бағыттар">
+      <header class="route-top">
+        <div class="route-citybar">
+          <span class="route-place-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-8.1 7-14a7 7 0 1 0-14 0c0 5.9 7 14 7 14z" fill="currentColor"/><circle cx="12" cy="8" r="2.3" stroke="#fff" fill="#fff"/></svg></span>
+          <button type="button" class="route-location-btn" onclick="showToast('Қазір Алматы бағыттары көрсетілген')" aria-label="Қала Алматы">Алматы <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="route-city-actions">
+            <button type="button" id="route-list-toggle" class="route-menu-btn" onclick="toggleRouteLayout()" aria-label="Тізім түрін ауыстыру"><span id="route-layout-label">Тізім</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg></button>
+            <button type="button" class="route-reload" aria-label="Тізімді бастапқы күйге қайтару" onclick="resetRoutes()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 9A8.5 8.5 0 1 0 21 15"/><path d="M21 3v6h-6"/></svg></button>
+          </div>
+        </div>
+        <nav class="route-main-tabs" aria-label="Бағыттар режимі">
+          <button type="button" id="route-tab-transport" class="route-main-tab active" onclick="selectRouteMainTab('transport')">Көлік</button>
+          <button type="button" id="route-tab-trip" class="route-main-tab" onclick="selectRouteMainTab('trip')">Жол жүру</button>
+        </nav>
+      </header>
+      <div id="route-search-categories" class="route-search-and-categories">
+        <div class="route-search-box">
+          <input id="route-search" aria-label="Бағыт нөмірін іздеу" placeholder="Бағыт нөмірін енгізіңіз" inputmode="search" autocomplete="off" oninput="filterRoutes()" />
+          <button type="button" id="route-clear-search" class="route-search-clear" onclick="clearRouteSearch()" aria-label="Іздеуді тазалау"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 5 14 14M19 5 5 19"/></svg></button>
+        </div>
+        <nav class="route-category-list" role="tablist" aria-label="Көлік түрі">
+          <button type="button" class="route-category active" id="route-category-bus" role="tab" aria-selected="true" onclick="chooseRouteCategory('bus')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="16" rx="3"/><path d="M5 11h14M8 19v2m8-2v2M8 15h.02m8 0h.02M9 3v-1h6v1"/></svg>Автобустар</button>
+          <button type="button" class="route-category" id="route-category-trolley" role="tab" aria-selected="false" onclick="chooseRouteCategory('trolley')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="16" rx="3"/><path d="M5 11h14M8 19v2m8-2v2M8 15h.02m8 0h.02M9 3v-1h6v1"/></svg>Троллейбустар</button>
+          <button type="button" class="route-category" id="route-category-metro" role="tab" aria-selected="false" onclick="chooseRouteCategory('metro')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3 3.7 19H7l3.2-8 1.8 4 1.8-4 3.2 8h3.3L17 3h-3L12 8 10 3z"/><path d="M6 21h12"/></svg>Метро</button>
+        </nav>
+      </div>
+      <div id="route-main-area" class="route-main-area">
+        <div id="route-catalog-scroll" class="route-catalog-scroll">
+          <div id="route-number-grid" class="route-number-grid" aria-live="polite"></div>
+          <p id="route-no-results" class="route-empty" hidden>Бұл нөмір табылмады</p>
+          <div class="route-info">Тізім: <a href="https://ru.wikiroutes.info/payment/62" target="_blank" rel="noopener noreferrer">WikiRoutes</a> және <a href="https://aet.kz/routes" target="_blank" rel="noopener noreferrer">Алматыэлектркөлік</a>.<br/>Бұл анықтамалық тізім, автобустардың нақты уақыттағы орналасуы емес.</div>
+        </div>
+        <div class="route-favorites">
+          <div class="route-fav-row">
+            <button type="button" class="route-fav-chip bookmark" title="Таңдаулылар" onclick="toggleRouteFavorites()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" id="route-fav-mark"><path d="M6 3.5h12v17l-6-4-6 4z"/></svg></button>
+            <button type="button" class="route-fav-chip" id="route-fav-home" onclick="filterFavoriteRoutes('home')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.3 12 4l9 7.3M5.5 10.2V20h13v-9.8M10 20v-7h4v7"/></svg> Үй</button>
+            <button type="button" class="route-fav-chip" id="route-fav-work" onclick="filterFavoriteRoutes('work')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg> Жұмыс</button>
+          </div>
+        </div>
+      </div>
+      <div id="route-trip-view" class="route-trip-view" hidden>
+        <h3>Жол жүру бағытын табу</h3>
+        <p>Қайдан және қайда баратыныңызды енгізіңіз. Маршрутты сыртқы карта сервисінде ашуға болады.</p>
+        <label for="route-trip-from">Қайдан</label><input id="route-trip-from" type="text" placeholder="Мекенжай немесе аялдама" />
+        <label for="route-trip-to">Қайда</label><input id="route-trip-to" type="text" placeholder="Мекенжай немесе аялдама" />
+        <button class="route-trip-search" type="button" onclick="openTripMap()">Картадан іздеу</button>
+      </div>
+      <footer class="route-bottom-nav">
+        <button type="button" class="route-bottom-button" onclick="openRoutesPage()"><span class="route-selected-icon"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 25V10c0-5 3-7.5 9-7.5s9 2.5 9 7.5v15c0 2.3-1.5 3.8-4 3.8H11c-2.5 0-4-1.5-4-3.8Z" fill="#0d1534"/><rect x="10" y="8" width="12" height="10" rx="3.2" fill="white"/><path d="M10 22h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="11" cy="24.4" r="1.5" fill="white"/><circle cx="21" cy="24.4" r="1.5" fill="white"/><path d="M11 29.3v1.5M21 29.3v1.5" stroke="#0d1534" stroke-width="3" stroke-linecap="round"/></svg></span>Бағыттар</button>
+        <button type="button" class="route-bottom-button" onclick="closeRoutesPage()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20m-16 5h5"/></svg>Карталар</button>
+        <div class="route-qr-holder"><button type="button" class="route-qr-button" aria-label="QR пайдалану" onclick="openQrFromRoutes()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 2h7v7H2zM15 2h7v7h-7zM2 15h7v7H2zM4 4h3v3H4zM17 4h3v3h-3zM4 17h3v3H4zM12 12h3v3h-3zM20 12h2M20 15h2v3h-2zM13 19h3v3h-3zM18 21h4" stroke-width="2.6"/></svg></button></div>
+        <button type="button" class="route-bottom-button" onclick="showToast('Life бөлімі')"><svg style="color:#2ecc53" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.7a5 5 0 0 0-7.1 0L12 7.4l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21l8.8-8.8a5 5 0 0 0 0-7.1z" fill="currentColor" stroke="currentColor"/></svg>Life</button>
+        <button type="button" class="route-bottom-button" onclick="showToast('Мәзір')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><circle cx="12" cy="9" r="3" fill="#fff" stroke="none"/><path d="M5.5 18a7 7 0 0 1 13 0" stroke="#fff" stroke-width="2"/></svg>Мәзір</button>
+      </footer>
+      <div id="route-detail-overlay" class="route-detail-overlay" hidden onclick="hideRouteDetail()">
+        <section class="route-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="route-detail-title" onclick="event.stopPropagation()">
+          <div class="route-detail-head"><h2 id="route-detail-title">Автобус №1</h2><button type="button" class="route-close-sheet" aria-label="Жабу" onclick="hideRouteDetail()">×</button></div>
+          <p id="route-detail-description">Бағыт туралы дерек.</p>
+          <a id="route-detail-link" class="route-detail-link" href="https://ru.wikiroutes.info/payment/62" target="_blank" rel="noopener noreferrer">Бағыт туралы интернеттен қарау <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:8px"></i></a>
+        </section>
+      </div>
+    </section>
+
+    <!-- TOP UP / AUTO TOP UP — screenshot-like rebuild -->
+    <div id="page-topup" class="hidden absolute inset-0 topup-page z-50 flex flex-col overflow-y-auto no-scrollbar">
+      <div class="topup-header">
+        <button type="button" onclick="closeTopUpPage()" class="topup-back-btn" aria-label="Артқа"><i class="fa-solid fa-arrow-left"></i></button>
+        <h2 class="topup-header-title">Толықтыру</h2>
+      </div>
+      <div class="topup-body">
+        <p class="topup-subtitle">Толтыру үшін ONAY! картасын таңдаңыз</p>
+        <div class="topup-card-deck" id="topup-card-deck">
+          <div class="topup-card topup-card-blue" role="button" tabindex="0" onclick="setTopupCard(0)">
+            <div class="topup-card-content">
+              <div>
+                <div class="topup-card-title">Virtual</div>
+                <div class="topup-chip">Балалар</div>
+              </div>
+              <div class="topup-balance"><span id="topup-card-balance-main">80</span> <small>₸</small></div>
+            </div>
+          </div>
+          <div class="topup-card topup-card-purple" role="button" tabindex="0" onclick="setTopupCard(1)">
+            <div class="topup-card-content">
+              <div>
+                <div class="topup-card-title">Virtual</div>
+                <div class="topup-chip topup-chip-purple">Бірыңғай</div>
+              </div>
+              <div class="topup-balance">0 <small>₸</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="topup-tabs">
+          <button type="button" id="tab-topup-manual" class="topup-tab active" onclick="switchTopupTab('manual')">Толықтыру</button>
+          <button type="button" id="tab-topup-auto" class="topup-tab" onclick="switchTopupTab('auto')">Автотолықтыру</button>
+        </div>
+
+        <section id="topup-manual-panel" class="topup-panel topup-screen-white">
+          <div class="topup-section-title">Толықтыру</div>
+          <input id="amount-input-field" type="number" min="200" placeholder="Соманы енгізіңіз" class="topup-input-box" />
+          <div class="topup-amount-pills">
+            <button type="button" class="topup-amount-pill" onclick="setQuickAmount(200)">200 ₸</button>
+            <button type="button" class="topup-amount-pill" onclick="setQuickAmount(300)">300 ₸</button>
+            <button type="button" class="topup-amount-pill" onclick="setQuickAmount(500)">500 ₸</button>
+            <button type="button" class="topup-amount-pill" onclick="setQuickAmount(1000)">1000 ₸</button>
+            <button type="button" class="topup-amount-pill" onclick="setQuickAmount(3600)">3600 ₸</button>
+          </div>
+          <div class="topup-hint">
+            <div>Ең аз сома 200 ₸</div>
+            <div>Комиссия 0 ₸</div>
+          </div>
+
+          <div class="topup-block-title">Төлем әдісі</div>
+          <button type="button" class="topup-pay-row w-full text-left" onclick="showToast('Төлем картасын ауыстыру демо')">
+            <div class="topup-pay-main">
+              <div class="onay-bank-icon"></div>
+              <div>
+                <div class="topup-pay-name">KASPI BANK JSC</div>
+                <div class="topup-pay-sub">440043...1916</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down topup-chevron"></i>
+          </button>
+
+          <button type="button" onclick="processTopUpPayment()" class="topup-main-button">Толықтыру</button>
+
+          <div class="topup-legal">
+            Жалғастыру арқылы Сіз <span class="link">ұсыныс шарттарын</span> қабылдайсыз. Біз карта<br/>
+            деректерін сақтамаймыз. Қауіпсіздікке Халық банкінен ePay кепілдік<br/>береді
+          </div>
+          <div class="topup-secure"><i class="fa-solid fa-lock lock"></i><span class="https">HTTPS/SSL</span> Қорғалған қосылыс</div>
+          <div class="topup-logos">
+            <span class="pay-logo visa">VISA</span>
+            <span class="pay-logo visa electron">VISA</span>
+            <span class="pay-logo mc"><i class="fa-brands fa-cc-mastercard"></i></span>
+            <span class="pay-logo maestro"><span class="c1"></span><span class="c2"></span></span>
+          </div>
+        </section>
+
+        <section id="topup-auto-panel" class="topup-panel topup-screen-white hidden">
+          <div class="autotopup-row">
+            <div class="topup-section-title" style="margin-bottom:0;">Автоматты түрде толықтыру</div>
+            <button type="button" id="autotopup-switch" class="autotopup-toggle" aria-label="Автотолықтыруды қосу/өшіру" aria-pressed="false" onclick="toggleAutoTopup()"></button>
+          </div>
+
+          <div id="autotopup-off-content">
+            <div class="autotopup-help">
+              Бұл қызмет Сіз енгізген сомаға таңдалған ONAY! картасының теңгерімін автоматты түрде толықтыруға мүмкіндік береді. Қызмет картада Сіз белгілеген шектен аз қаражат қалғанда іске қосылады. Бұл картаны қолмен толықтырмауға және теңгерімді үнемі тексермеуге мүмкіндік береді
+            </div>
+          </div>
+
+          <div id="autotopup-on-content" class="hidden autotopup-form">
+            <div class="autotopup-label">Егер теңгерім аз болса</div>
+            <div class="autotopup-field-wrap">
+              <input id="auto-threshold-input" type="number" min="80" placeholder="Соманы енгізіңіз" class="topup-input-box" />
+              <span class="currency">₸</span>
+            </div>
+            <div class="autotopup-field-hint">Ең аз сома 80 ₸</div>
+
+            <div class="autotopup-divider-space"></div>
+            <div class="autotopup-label">Толықтыру</div>
+            <div class="autotopup-field-wrap">
+              <input id="auto-amount-input" type="number" min="200" placeholder="Соманы енгізіңіз" class="topup-input-box" />
+              <span class="currency">₸</span>
+            </div>
+            <div class="autotopup-field-hint">Ең аз сома 200 ₸</div>
+
+            <div class="topup-block-title" style="margin-top:42px;">Қай картадан есептен шығару керек</div>
+            <button type="button" class="topup-pay-row w-full text-left" onclick="showToast('Төлем картасын ауыстыру демо')">
+              <div class="topup-pay-main">
+                <div class="onay-bank-icon"></div>
+                <div>
+                  <div class="topup-pay-name">KASPI BANK JSC</div>
+                  <div class="topup-pay-sub">440043...1916</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-down topup-chevron"></i>
+            </button>
+
+            <button type="button" onclick="saveAutoTopup()" class="topup-main-button">Сақтау</button>
+            <div class="topup-legal" style="margin-top:22px;">
+              Жалғастыру арқылы Сіз <span class="link">ұсыныс шарттарын</span> қабылдайсыз. Біз
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Аударым беті: түпнұсқа скриншотқа сәйкес (қалған беттер өзгермейді) -->
+    <div id="page-transfer" class="hidden" role="dialog" aria-modal="true" aria-labelledby="transfer-page-title">
+      <header class="transfer-head">
+        <button class="transfer-back" type="button" onclick="closeTransferPage()" aria-label="Артқа"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12H4m0 0 7-7m-7 7 7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="square" stroke-linejoin="miter"/></svg></button>
+        <h2 id="transfer-page-title">Аудару</h2>
+      </header>
+      <div class="transfer-gap"></div>
+      <main class="transfer-content no-scrollbar">
+        <div class="transfer-art" aria-label="Қол күлгін конструктор бөлігін ұстап тұр">
+          <img src="assets/transfer-unavailable.png" alt="Күлгін конструктор бөлігін ұстап тұрған қол" />
+        </div>
+        <h1 class="transfer-title">Бұл функцияны пайдалану әзірше<br />мүмкін емес</h1>
+        <p class="transfer-subtitle">Қазіргі уақытта бұл функция әзірлену барысында. Көп ұзамай бәрі жұмыс істейді - міндетті түрде қайта келіңіз!</p>
+      </main>
+      <footer class="transfer-footer"><button type="button" class="transfer-ok" onclick="closeTransferPage()">Ok</button></footer>
+    </div>
+
+    <!-- Басқа карталар: анықтама / карта нөмірін енгізу (демо) -->
+    <div id="other-card-modal" class="cards-modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="other-modal-title" onclick="closeOtherCardModal()">
+      <div class="cards-modal" onclick="event.stopPropagation()">
+        <h2 id="other-modal-title">Картаны қосу</h2>
+        <p id="other-modal-text">Жақын адамыңыздың ONAY! картасының нөмірін енгізіңіз.</p>
+        <input id="other-card-number" type="text" inputmode="numeric" autocomplete="off" maxlength="24" placeholder="Карта нөмірі" aria-label="Карта нөмірі" />
+        <button type="button" id="other-modal-continue" class="cards-modal-primary" onclick="submitOtherCard()">Жалғастыру</button>
+        <button type="button" class="cards-modal-secondary" onclick="closeOtherCardModal()">Жабу</button>
+      </div>
+    </div>
+
+    <!-- ХАБАРЛАМАЛАР — қосымшадағы қоңырау белгішесінен ашылатын бет -->
+    <section id="page-notifications" class="hidden" role="region" aria-label="Хабарламалар">
+      <header class="notifications-header">
+        <button type="button" class="notifications-back" aria-label="Артқа" onclick="closeNotifications()">
+          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12H4m0 0 7-7m-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h2>Хабарламалар</h2>
+      </header>
+      <main class="notifications-body no-scrollbar">
+        <img class="notifications-art" src="assets/notifications-empty.png" alt="Бос хабарламалар — мұңайған күлгін қалташа" />
+        <h3 class="notifications-empty-title">Бұл жерде әлі ештеңе жоқ</h3>
+        <p class="notifications-empty-subtitle">Жақында ONAY!-ден маңызды хабарландырулар келеді</p>
+      </main>
+    </section>
+
+    <!-- Toast хабарламасы -->
+    <div id="toast" class="hidden absolute bottom-24 left-1/2 -translate-x-1/2 max-w-[90%] z-[90] bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs text-center"></div>
+
+    <!-- QR пайдалану: сканер немесе екінші табтағы өзгертілмеген QR -->
+    <section id="page-qr" class="hidden" aria-label="QR пайдалану">
+      <header class="qr-head">
+        <button class="qr-back" type="button" onclick="closeQrPage()" aria-label="Артқа"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12H4m0 0 7-7m-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <h2>QR пайдалану</h2>
+      </header>
+      <nav class="qr-tabs" role="tablist" aria-label="QR қолдану режимдері">
+        <button type="button" id="qr-tab-scan" class="qr-tab active" role="tab" aria-controls="qr-scanner" aria-selected="true" onclick="setQrTab('scan')">
+          <span>Сканерлеу</span><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm9-3h3v3h-3v-3zm5 0h4v3h-4v-3zm-5 5h3v4h-3v-4zm5 0h2v2h2v2h-4v-4zM11 5h2v2h-2V5zm0 4h2v2h-2V9z"/></svg>
+        </button>
+        <button type="button" id="qr-tab-create" class="qr-tab" role="tab" aria-controls="qr-create" aria-selected="false" onclick="setQrTab('create')">
+          <span>Түзу</span><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm9-3h3v3h-3v-3zm5 0h4v3h-4v-3zm-5 5h3v4h-3v-4zm5 0h2v2h2v2h-4v-4zM11 5h2v2h-2V5zm0 4h2v2h-2V9z"/></svg>
+        </button>
+      </nav>
+      <div id="qr-scanner" class="qr-panel qr-scan-panel" role="tabpanel">
+        <video id="qr-camera" autoplay muted playsinline webkit-playsinline aria-label="Артқы камера көрінісі"></video>
+        <div class="qr-scan-dim"></div>
+        <div id="qr-camera-status" class="qr-camera-status" role="status" aria-live="polite" hidden>
+          <p id="qr-camera-status-text"></p>
+          <button type="button" id="qr-camera-retry" onclick="startQrCamera()">Камераны қосу / қайталау</button>
+          <button type="button" class="qr-camera-photo-btn" onclick="openNativeQrCamera()">Камера қолданбасын ашу (фото)</button>
+        </div>
+        <input id="qr-native-photo" type="file" accept="image/*" capture="environment" aria-label="Телефон камерасымен фото түсіру" onchange="onNativeQrPhoto(event)">
+        <div class="qr-scan-instructions">
+          <button id="qr-torch" class="qr-flash off" type="button" aria-label="Жарқылды қосу" onclick="toggleQrTorch()"><svg width="24" height="27" viewBox="0 0 24 27" fill="none" aria-hidden="true"><path d="M14 2 4 15h7l-1 10 10-15h-7l1-8Z" fill="white"/><path d="M4 2 20 25" stroke="white" stroke-width="1.8"/></svg></button>
+          <div class="qr-help-text">Жол ақысының төлемін көлікте немесе<br>ONAY! серіктестерінің желісінде төлеу үшін<br>камераны QR-кодқа жақындатыңыз</div>
+        </div>
+        <div class="qr-scan-square" aria-label="QR-код сканерлеу жақтауы">
+          <span class="qr-corner tl"></span><span class="qr-corner tr"></span><span class="qr-corner bl"></span><span class="qr-corner br"></span>
+        </div>
+        <button class="qr-code-manual" type="button" onclick="openQrManual()">Кодты қолмен теру</button>
+      </div>
+      <div id="qr-create" class="qr-panel qr-create-panel" role="tabpanel" hidden>
+        <!-- QR фотосы пайдаланушының екінші суретінен өзгертілместен қиып алынды. -->
+        <button type="button" class="qr-image-button" aria-label="QR кодты үлкейту" onclick="openQrZoom()">
+          <img id="original-payment-qr" src="assets/metro-qr.png" alt="Суреттегі өзгертілмеген QR коды" />
+        </button>
+        <p class="qr-enlarge-label">Үлкейту үшін басыңыз</p>
+        <div class="qr-available"><span>Қолжетімді:</span>
+          <div class="qr-metro-logo" aria-label="Алматы метросы">
+            <svg viewBox="0 0 64 64" width="42" height="42" aria-hidden="true">
+              <path d="M6 34C9 8 54 8 58 34" fill="none" stroke="#11a8cb" stroke-width="4.4"/>
+              <path d="M14 42 24 18 32 27 40 18 50 42 39 42 36 32 32 37 28 32 25 42Z" fill="#f0241e"/>
+              <path d="M10 43 32 55 54 43 32 60Z" fill="#171044"/>
+              <path d="M14 41 32 47 50 41 32 52Z" fill="#ffda00"/>
+            </svg>
+          </div>
+        </div>
+        <p class="qr-card-description">Жол ақысын төлеуге арналған карта</p>
+        <button type="button" class="qr-card" onclick="openMetroCardChooser()" aria-haspopup="dialog" aria-controls="metro-card-chooser" aria-label="Метро төлемі үшін картаны ауыстыру">
+          <span class="qr-card-icon metro-card-icon is-blue" id="qr-card-icon">
+            <svg class="onay-up-logo" viewBox="0 0 42 42" aria-hidden="true"><path d="M21 9C11 9 4 16 4 27v12h34V27C38 16 31 9 21 9Z" fill="#071331"/><path d="M21 17 11 27a3.4 3.4 0 0 0 5 4.6l2-2V40h6V29.6l2 2a3.4 3.4 0 0 0 5-4.6Z" fill="#78c2ec"/></svg>
+          </span>
+          <span class="qr-card-name" id="qr-card-name">Virtual</span>
+          <span class="qr-card-value"><span id="qr-card-balance">80</span> ₸</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 9 7 7 7-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div id="qr-zoom" class="qr-overlay" hidden>
+        <button type="button" onclick="closeQrZoom()" aria-label="Жабу"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12H4m0 0 7-7m-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <img src="assets/metro-qr.png" alt="Өзгертілмеген QR кодтың үлкейтілген көрінісі" />
+        <p>QR коды — берілген фотосуреттен алынған бейне</p>
+      </div>
+      <div id="qr-manual" class="qr-manual-overlay" hidden onclick="closeQrManual()">
+        <div class="qr-manual-dialog" role="dialog" aria-modal="true" aria-label="Кодты қолмен теру" onclick="event.stopPropagation()">
+          <h3>Кодты қолмен теру</h3>
+          <input id="qr-manual-input" type="text" inputmode="numeric" placeholder="Кодты енгізіңіз" maxlength="32" autocomplete="off" />
+          <div class="actions">
+            <button type="button" class="secondary" onclick="closeQrManual()">Болдырмау</button>
+            <button type="button" onclick="submitQrManual()">Жалғастыру</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="page-codepay" class="service-page hidden" aria-label="Код бойынша төлеу">
+      <div class="service-header">
+        <button type="button" class="service-back" onclick="closeCodePayPage()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><path d="M19.5 12H4.5m0 0 6.5-6.5M4.5 12l6.5 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <h2 class="service-title">Код бойынша төлеу</h2>
+        <button type="button" class="service-help" onclick="openCodePayHelp()" aria-label="Код бойынша төлеу туралы ақпарат" aria-haspopup="dialog" aria-controls="codepay-help-overlay"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.9"/><path d="M9.5 9a2.6 2.6 0 0 1 5 .9c0 1.5-1.9 2-2.5 3.3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17" r="1.1" fill="currentColor"/></svg></button>
+      </div>
+      <div class="service-scroll">
+        <p class="codepay-subtitle">Ақша есептен шығарылатын ONAY! картасын таңдаңыз</p>
+        <button type="button" class="service-card-row" onclick="openSourceChooser('codepay')" style="width:100%;background:transparent;border:0;padding:20px 0 8px;">
+          <span id="codepay-card-icon"><span class="mini-virtual-icon"></span></span>
+          <div style="font-size:18px;color:#161a35;display:flex;flex-direction:column;gap:5px;align-items:flex-start;">Virtual <span id="codepay-needs-topup" hidden class="metro-needs-topup">Толтыру қажет</span></div>
+          <div style="margin-left:auto;font-size:20px;color:#161a35;"><span id="codepay-balance">80</span> ₸</div>
+          <span class="service-select-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 9 7 7 7-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div class="codepay-input-wrap">
+          <label>Көліктің кодын енгізіңіз</label>
+          <input id="codepay-input" class="codepay-input" type="text" inputmode="numeric" maxlength="12" autocomplete="off" />
+        </div>
+        <div class="codepay-hint">Көлік коды ONAY! терминалдары мен стикерлерінде көрсетілген</div>
+        <button type="button" class="onay-yellow-btn" onclick="submitCodePayment()">Төлеу</button>
+        <button type="button" class="onay-outline-btn" onclick="openQrPage('create'); closeCodePayPage();"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:99px;background:#fff;border:1px solid #d7d7df;"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23ffffff' d='M4 28h56v16H4z'/%3E%3Cpath fill='%23e53935' d='M6 30h52v7H6z'/%3E%3Cpath fill='%231e88e5' d='M6 37h52v7H6z'/%3E%3Cpath fill='%23fbc02d' d='M6 44h52v6H6z'/%3E%3Cpath fill='%23ffffff' d='M13 18c7 0 13 6 19 6s12-6 19-6c0 7-6 13-19 13s-19-6-19-13z'/%3E%3Cpath fill='%230b2e6d' d='M13 18c4 3 8 5 19 5s15-2 19-5c-2 6-7 10-19 10s-17-4-19-10z'/%3E%3C/svg%3E" alt="Метро" style="width:18px;height:18px"/></span>Метро төлеміне өтіңіз</button>
+        <div class="promo-ya">
+          <div class="small-top">Яндекс ✴ Музыка &nbsp; <span style="font-weight:800">⊕Плюс</span></div>
+          <div class="big">Яндекс Музыканы<br/>30 күн тегін<br/>тыңдаңыз</div>
+          <div class="sub">Яндекс Плюс жазылымы бойынша</div>
+          <div class="phone"></div>
+          <div class="fine">Науқан 11.06.2026 ж. бастап 31.12.2026 ж. дейін. Жазылымы 30 күн тегін,<br/>әрі қарай айына 2499 теңге. Толығырақ шарттар: ya.cc/legal_onay</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-my-tickets" class="service-page hidden" aria-label="Менің билеттерім">
+      <div class="service-header">
+        <button type="button" class="service-back" onclick="closeMyTicketsPage()" aria-label="Артқа">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="27" height="27" fill="none" aria-hidden="true"><path d="M19.5 12H4.5m0 0 6.5-6.5M4.5 12l6.5 6.5" stroke="#111" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h2 class="service-title">Менің билеттерім</h2>
+      </div>
+      <div class="tickets-main-scroll service-scroll">
+        <img class="ticket-exact-art" src="assets/ticket-hand.png" alt="Сары билет ұстап тұрған қол суреті" />
+        <p class="tickets-empty-text">Қазір Сіздің алған билеттеріңіз жоқ</p>
+        <button type="button" class="promo-tournament" onclick="openTicketsSheet()" aria-label="Турнир туралы ақпарат">
+          <img src="assets/tournament.png" alt="Турнирге қатысып, жеңіске жетіңіз! 19.10 — 26.10" />
+        </button>
+      </div>
+      <button id="tickets-bottom-peek" class="tickets-bottom-peek" type="button" onclick="openTicketsSheet()" aria-label="Төменгі ақпарат панелін ашу">
+        <span class="tickets-peek-handle" aria-hidden="true"></span>
+        <span class="tickets-peek-placeholder" aria-hidden="true"></span>
+      </button>
+    </section>
+
+    <section id="page-monthly-pass" class="service-page hidden" aria-label="ONAY! жол жүру абонементі">
+      <div class="monthly-overlay">
+        <div class="monthly-sheet">
+          <button type="button" id="monthly-drag-handle" class="monthly-handle" onclick="onMonthlyHandleClick(event)" aria-label="Төмен сырғытып немесе басып айлық абонемент бетін жабу"></button>
+          <div class="monthly-topbar">
+            <h2 class="monthly-title">ONAY! жол жүру абонементі</h2>
+            <button type="button" class="monthly-help" onclick="openMonthlyRules()" aria-label="Абонемент ережелері" aria-haspopup="dialog" aria-controls="monthly-rules-overlay"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.9"/><path d="M9.5 9a2.6 2.6 0 0 1 5 .9c0 1.5-1.9 2-2.5 3.3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17" r="1.1" fill="currentColor"/></svg></button>
+          </div>
+          <div class="monthly-body">
+            <div class="monthly-location"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.8a8.2 8.2 0 0 0-8.2 8.2c0 6 8.2 12.3 8.2 12.3s8.2-6.3 8.2-12.3A8.2 8.2 0 0 0 12 1.8Zm0 11.3a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2Z"/></svg><span>Алматы</span><span style="margin-left:auto;color:#b5b6c4;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 9 7 7 7-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="monthly-card">
+              <div>
+                <div class="monthly-card-title">Айлық жол жүру абонементі: Қараша</div>
+                <div class="monthly-card-sub">Ай бойы шексіз сапарлар. 01.11.2026 іске қосылады.</div>
+              </div>
+              <div class="monthly-price">9900 ₸</div>
+            </div>
+            <div class="monthly-info">
+              <div style="font-size:33px;line-height:1; color:#191d37;"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 3h7v7H3zM5.5 5.5h2v2h-2zM14 3h7v7h-7zM16.5 5.5h2v2h-2zM3 14h7v7H3zM5.5 16.5h2v2h-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 14h3v3h-3zM19 14h2v3h-2zM14 19h2v2h-2zM18 19h3v2h-3z" fill="currentColor"/></svg></div>
+              <div>Виртуалдық карталар арқылы жолақы төлеу тек ONAY! QR көмегімен мобильді қолданба арқылы жүзеге асырылады</div>
+            </div>
+          </div>
+          <div class="monthly-bottom">
+            <div class="monthly-meta">
+              <div>Төлем картасы<strong style="display:flex;align-items:center;gap:10px;"><span class="mini-virtual-icon" style="width:34px;height:24px;"></span>Virtual</strong></div>
+              <div style="text-align:right;">Карта балансы<strong>80 ₸</strong></div>
+            </div>
+            <button type="button" class="monthly-paybtn" onclick="showToast('Демо-нұсқа: төлем жасалмайды')">Төлемге өту</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <div id="codepay-help-overlay" class="codepay-help-overlay" hidden onclick="if(event.target===this)closeCodePayHelp()">
+      <div class="codepay-help-card" role="dialog" aria-modal="true" aria-labelledby="codepay-help-title">
+        <div class="codepay-help-body">
+          <h3 id="codepay-help-title" class="codepay-help-title">Код арқылы қалай төлеуге болады?</h3>
+          <div class="codepay-help-text">
+            <p>Код бойынша төлеу – ұялы телефоныңыздың камерасы ақаулы болып, QR-кодты сканерлеу мүмкін болмаса да, жол ақысын төлеуге көмектеседі.</p>
+            <p><strong>Төлеу үшін:</strong><br>• Қаражат есептен шығарылатын ONAY! картасын таңдаңыз.<br>• Қоғамдық көлік кодын енгізіңіз - оны терминалдардан немесе ONAY! стикерлерінен табуға болады.<br>• «Төлеу» түймесін басып, келесі бетте төлемді растаңыз.<br>• Дайын! Сіздің билетіңіз «Менің билеттерім» бетінде пайда болады.</p>
+            <p>Төлемді растау арқылы Сіз ONAY! қолданбасы арқылы қызметтер үшін төлем шарттары мен тарифтерімен келісіп, оларды қабылдайсыз.</p>
+            <p>Бізбен бірге болғаныңыз үшін рақмет!</p>
+          </div>
+        </div>
+        <button type="button" class="codepay-help-ok" onclick="closeCodePayHelp()">Ok</button>
+      </div>
+    </div>
+
+    <div id="monthly-rules-overlay" class="monthly-rules-overlay" hidden onclick="if(event.target===this)closeMonthlyRules()">
+      <div class="monthly-rules-sheet" role="dialog" aria-modal="true" aria-labelledby="monthly-rules-title">
+        <div class="monthly-rules-handle"></div>
+        <div class="monthly-rules-content">
+          <h3 id="monthly-rules-title" class="monthly-rules-title">Жол жүру абонементтерін пайдалану ережелері:</h3>
+          <div class="monthly-rules-illustration" aria-hidden="true">
+            <div class="pass-card"></div>
+            <div class="phone"></div>
+            <div class="validator"></div>
+            <div class="monthly-rules-qr"></div>
+          </div>
+          <div class="monthly-rules-bullets">
+            <p>• Жол жүру абонементі Сізге бір күнтізбелік ай ішінде шектеусіз жол жүруге құқық береді (сатып алу күніне қарамастан, айдың бірінші күнінен бастап соңғы күніне дейін қолданылады).</p>
+            <p>• Келесі айға жол жүру абонементін ағымдағы айдың 15-і мен келесі айдың 14-і аралығында сатып алуға болады.</p>
+            <p>• Жол жүру абонементін сатып алу және оны пайдалану кезеңінде ONAY! картаңызда кемінде бір жолақы құнына тең қалдық болуы қажет.</p>
+            <p>• ONAY! виртуалды картасындағы жол жүру абонементін пайдалану Мобильді қосымша арқылы QR-кодты сканерлеу немесе көлік кодты енгізу арқылы жүзеге асады.</p>
+          </div>
+          <button type="button" class="monthly-rules-close" onclick="closeMonthlyRules()">Жабу</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tickets-sheet-overlay" class="tickets-sheet-overlay" hidden onclick="if(event.target===this)closeTicketsSheet()">
+      <div class="tickets-sheet" role="dialog" aria-modal="true" aria-label="Менің билеттерім қосымша панелі">
+        <div class="tickets-sheet-handle"></div>
+        <div class="tickets-sheet-content">
+          
+          <div class="tickets-sheet-placeholder"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Түзу: картаны ауыстыруға арналған төменнен шығатын таңдау панелі -->
+    <div id="metro-card-chooser" class="metro-chooser-overlay" role="dialog" aria-modal="true"
+         aria-labelledby="metro-chooser-title" hidden onclick="if(event.target===this)closeMetroCardChooser()">
+      <div class="metro-chooser-sheet" role="document">
+        <div class="metro-chooser-handle" aria-hidden="true"></div>
+        <div class="metro-chooser-heading">
+          <h2 id="metro-chooser-title">Қайдан есептен шығару</h2>
+          <button class="metro-chooser-close" type="button" onclick="closeMetroCardChooser()" aria-label="Жабу">
+            <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="m4 4 16 16M20 4 4 20" fill="none" stroke="#071039" stroke-linecap="round" stroke-width="3"/></svg>
+          </button>
+        </div>
+        <p class="metro-chooser-caption">Карталарым</p>
+        <div class="metro-chooser-options" role="radiogroup" aria-label="Төлем картасы">
+          <button type="button" id="metro-card-option-0" class="metro-chooser-option selected" role="radio" aria-checked="true" onclick="selectMetroCard(0)">
+            <span class="metro-choice-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12l5 5 9-10" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></svg>
+            </span>
+            <span class="metro-card-icon is-blue" aria-hidden="true"><svg class="onay-up-logo" viewBox="0 0 42 42"><path d="M21 9C11 9 4 16 4 27v12h34V27C38 16 31 9 21 9Z" fill="#071331"/><path d="M21 17 11 27a3.4 3.4 0 0 0 5 4.6l2-2V40h6V29.6l2 2a3.4 3.4 0 0 0 5-4.6Z" fill="#78c2ec"/></svg></span>
+            <span class="metro-choice-name">Virtual</span>
+            <span class="metro-choice-balance">80 ₸</span>
+          </button>
+          <button type="button" id="metro-card-option-1" class="metro-chooser-option" role="radio" aria-checked="false" onclick="selectMetroCard(1)">
+            <span class="metro-choice-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12l5 5 9-10" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></svg></span>
+            <span class="metro-card-icon is-purple" aria-hidden="true"><svg class="onay-up-logo" viewBox="0 0 42 42"><path d="M21 9C11 9 4 16 4 27v12h34V27C38 16 31 9 21 9Z" fill="#071331"/><path d="M21 17 11 27a3.4 3.4 0 0 0 5 4.6l2-2V40h6V29.6l2 2a3.4 3.4 0 0 0 5-4.6Z" fill="#c6a3f7"/></svg></span>
+            <span class="metro-choice-name">Virtual<span class="metro-needs-topup">Толтыру қажет</span></span>
+            <span class="metro-choice-balance">0 ₸</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
